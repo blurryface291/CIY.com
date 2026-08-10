@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeTraders — Master the Markets | Stock Trading Education</title>
+  <meta name="description" content="Master the Markets with WeTraders. Learn price action, risk management, and options strategies from real NSE/BSE charts.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 4.6 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  
+  <!-- FontAwesome 6 CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --red: #E63946;
+      --red-dark: #B71C1C;
+      --red-gradient: linear-gradient(135deg, #E63946 0%, #8B1A2B 100%);
+      --green: #00C853;
+      --green-dark: #00893E;
+      --green-gradient: linear-gradient(135deg, #00C853 0%, #00893E 100%);
+      --bg: #FFFFFF;
+      --bg-soft: #F8F9FA;
+      --bg-section: #F4F5F7;
+      --ink: #1A1A2E;
+      --ink-dim: #555770;
+      --muted: #8E8EA0;
+      --border: #E8E8ED;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    body {
+      font-family: 'Mulish', sans-serif;
+      color: var(--ink);
+      background-color: var(--bg);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6, .poppins {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    a:hover {
+      text-decoration: none;
+      color: var(--red);
+    }
+
+    /* Placeholders */
+    .img-placeholder {
+      background: #F4F5F7;
+      border: 2px dashed #D1D5DB;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #9CA3AF;
+      font-family: 'Poppins', sans-serif;
+      gap: 6px;
+      width: 100%;
+      height: 100%;
+      min-height: 200px;
+    }
+    .img-placeholder .ph-icon { font-size: 36px; opacity: 0.5; }
+    .img-placeholder .ph-label { font-size: 14px; font-weight: 500; }
+    .img-placeholder .ph-size { font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+    
+    .img-placeholder.hero-ph {
+      background: rgba(255,255,255,0.05);
+      border-color: rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.8);
+      min-height: 420px;
+    }
+
+    /* 1. Top Category Bar */
+    .top-bar {
+      background: var(--red-gradient);
+      padding: 8px 0;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+    .top-bar::-webkit-scrollbar { display: none; }
+    .top-bar-links {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      padding: 0 15px;
+    }
+    .top-bar-links a {
+      color: #FFF;
+      font-size: 13px;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .top-bar-links a:hover { opacity: 0.8; color: #FFF; }
+
+    /* 2. Main Navbar */
+    .main-nav {
+      background: var(--bg);
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    .main-nav.scrolled {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-ph {
+      width: 120px;
+      height: 45px;
+      border: 2px dashed var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--muted);
+      border-radius: 6px;
+    }
+    .brand-name {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--ink);
+      margin: 0;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .cart-icon {
+      font-size: 20px;
+      color: var(--ink);
+    }
+    .hamburger {
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--ink);
+    }
+
+    /* Sidenav */
+    .sidenav {
+      height: 100%;
+      width: 320px;
+      position: fixed;
+      z-index: 1050;
+      top: 0;
+      right: -320px;
+      background-color: var(--ink);
+      overflow-x: hidden;
+      transition: 0.4s;
+      padding-top: 60px;
+      box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+    }
+    .sidenav.open { right: 0; }
+    .sidenav .closebtn {
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 36px;
+      color: #FFF;
+      cursor: pointer;
+    }
+    .sidenav-content { padding: 20px; color: #FFF; }
+    .sidenav-content a {
+      color: #FFF;
+      display: block;
+      padding: 12px 0;
+      font-size: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidenav-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1040;
+      display: none;
+    }
+
+    /* 3. Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #E63946 0%, #6B0F1A 50%, #1A1A2E 100%);
+      position: relative;
+      min-height: 550px;
+      display: flex;
+      align-items: center;
+      padding: 80px 0;
+      overflow: hidden;
+    }
+    .hero-pattern {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.5;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-badge {
+      background: #FFF;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 50px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      color: #FFF;
+      font-weight: 700;
+      font-size: clamp(32px, 5vw, 52px);
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .text-green { color: var(--green) !important; }
+    .hero-subtext {
+      color: #FFF;
+      font-size: 16px;
+      opacity: 0.85;
+      margin-bottom: 30px;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+    .btn-green {
+      background: var(--green);
+      color: #FFF;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      display: inline-block;
+    }
+    .btn-green:hover { background: var(--green-dark); color: #FFF; }
+    .btn-ghost {
+      border: 1px solid #FFF;
+      color: #FFF;
+      padding: 13px 32px;
+      border-radius: 8px;
+      font-weight: 500;
+      display: inline-block;
+      margin-left: 15px;
+    }
+    .btn-ghost:hover { background: #FFF; color: var(--ink); }
+    .trust-stats {
+      margin-top: 32px;
+      display: flex;
+      gap: 30px;
+    }
+    .trust-stat-num { font-weight: 700; font-size: 24px; color: #FFF; line-height: 1; }
+    .trust-stat-label { font-size: 12px; color: #FFF; opacity: 0.7; text-transform: uppercase; margin-top: 4px; }
+    
+    .floating-circle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+    .fc-1 { width: 20px; height: 20px; background: var(--green); top: 15%; left: 10%; opacity: 0.6; }
+    .fc-2 { width: 15px; height: 15px; background: var(--red); bottom: 20%; left: 50%; opacity: 0.5; animation-delay: 2s; }
+    .fc-3 { width: 25px; height: 25px; background: var(--green); top: 30%; right: 5%; opacity: 0.4; animation-delay: 4s; }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
+    }
+
+    /* 4. Course Categories */
+    .section-padding { padding: 80px 0; }
+    .section-title { font-weight: 600; font-size: 32px; margin-bottom: 10px; }
+    .section-subtitle { font-size: 16px; color: var(--ink-dim); margin-bottom: 50px; }
+    
+    .course-card {
+      background: #FFF;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease;
+    }
+    .course-card:hover { transform: translateY(-5px); }
+    .course-img-wrapper { aspect-ratio: 16/9; }
+    .course-body { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
+    .course-badge {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .badge-beginner { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+    .badge-popular { background: rgba(0, 200, 83, 0.1); color: var(--green-dark); }
+    .badge-elite { background: rgba(230, 57, 70, 0.1); color: var(--red-dark); }
+    
+    .course-title { font-weight: 600; font-size: 20px; margin-bottom: 10px; }
+    .course-desc { font-size: 14px; color: var(--ink-dim); margin-bottom: 20px; flex-grow: 1; }
+    .course-price-row { margin-bottom: 20px; }
+    .course-price-old { text-decoration: line-through; color: var(--muted); font-size: 14px; margin-right: 8px; }
+    .course-price-new { font-weight: 700; font-size: 24px; color: var(--red); font-family: 'Poppins', sans-serif; }
+    
+    .btn-course {
+      background: var(--green-gradient);
+      color: #FFF;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      margin-bottom: 15px;
+    }
+    .course-features { font-size: 13px; color: var(--ink-dim); margin-bottom: 0; }
+    
+    /* 5. Why Choose Us */
+    .bg-section { background-color: var(--bg-section); }
+    .feature-icon-ph {
+      width: 60px; height: 60px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; margin: 0 auto 20px;
+    }
+    .feature-title { font-weight: 600; font-size: 16px; margin-bottom: 10px; }
+    .feature-desc { font-size: 14px; color: var(--ink-dim); }
+
+    /* 6. Founder */
+    .founder-badge {
+      background: rgba(230, 57, 70, 0.1);
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 15px;
+      letter-spacing: 1px;
+    }
+    .founder-stats { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; }
+    .f-stat-num { font-weight: 700; font-size: 28px; color: var(--red); line-height: 1; }
+    .f-stat-label { font-size: 13px; color: var(--ink-dim); margin-top: 5px; }
+    
+    .img-wrapper-4x5 { aspect-ratio: 4/5; }
+
+    /* 7. Stats Counter */
+    .stats-bar {
+      background: var(--red-gradient);
+      padding: 50px 0;
+      color: #FFF;
+    }
+    .counter-num { font-weight: 700; font-size: 42px; line-height: 1; margin-bottom: 5px; }
+    .counter-label { font-size: 14px; opacity: 0.8; }
+
+    /* 8. Testimonials */
+    .testi-card {
+      background: #FFF;
+      border-radius: 12px;
+      padding: 28px;
+      box-shadow: var(--card-shadow);
+      height: 100%;
+    }
+    .stars { color: #E8A317; font-size: 14px; margin-bottom: 15px; }
+    .testi-quote { font-style: italic; font-weight: 500; font-size: 16px; margin-bottom: 20px; color: var(--ink); }
+    .testi-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
+    .testi-author { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+    .testi-course { font-size: 13px; color: var(--muted); }
+    .avatar-ph {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--bg-soft);
+      border: 1px dashed var(--muted);
+    }
+
+    /* 9. CTA Banner */
+    .cta-banner {
+      background: var(--green-gradient);
+      padding: 60px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner h2 { font-weight: 700; font-size: 32px; color: #FFF; margin-bottom: 15px; }
+    .cta-banner p { color: #FFF; opacity: 0.85; font-size: 16px; margin-bottom: 30px; }
+    .btn-cta {
+      background: #FFF;
+      color: var(--green-dark);
+      padding: 16px 40px;
+      border-radius: 8px;
+      font-weight: 700;
+      display: inline-block;
+    }
+    .btn-cta:hover { background: var(--bg-soft); color: var(--green-dark); }
+    .chart-bg {
+      position: absolute;
+      right: -5%;
+      bottom: -20%;
+      opacity: 0.1;
+      width: 50%;
+      pointer-events: none;
+    }
+
+    /* 10. Free Resources */
+    .resource-banner-wrapper { aspect-ratio: 3/2; }
+    .resource-list { list-style: none; padding: 0; margin-bottom: 30px; }
+    .resource-list li { margin-bottom: 12px; font-size: 15px; }
+    .resource-list li i { color: var(--green); margin-right: 10px; }
+    .btn-red {
+      background: var(--red); color: #FFF; padding: 12px 24px; border-radius: 8px; font-weight: 600; border: none;
+    }
+    .btn-red:hover { background: var(--red-dark); color: #FFF; }
+
+    /* 11. Footer */
+    footer {
+      background: #1A1A2E;
+      color: #8E8EA0;
+      padding: 60px 0 30px;
+    }
+    .footer-title {
+      color: #FFF;
+      font-size: 16px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; padding: 0; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: #8E8EA0; font-size: 14px; }
+    .footer-links a:hover { color: #FFF; }
+    .social-icons a {
+      color: #8E8EA0;
+      font-size: 18px;
+      margin-right: 15px;
+      transition: 0.3s;
+    }
+    .social-icons a:hover { color: #FFF; }
+    .footer-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 40px 0 20px;
+    }
+    .sebi-text { font-size: 12px; color: #555770; margin-bottom: 15px; line-height: 1.6; }
+    .copyright { font-size: 13px; margin: 0; }
+    .footer-logo-ph { width: 80px; height: 35px; border: 1px dashed rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; font-size: 10px; color: #FFF; margin-bottom: 10px; }
+
+    /* 12. Floating Elements */
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 56px;
+      height: 56px;
+      background: #25D366;
+      color: #FFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 4px 15px rgba(37,211,102,0.4);
+      z-index: 90;
+      transition: transform 0.3s;
+    }
+    .whatsapp-btn:hover { transform: scale(1.1); color: #FFF; }
+    
+    .back-to-top {
+      position: fixed;
+      bottom: 100px;
+      right: 36px;
+      width: 40px;
+      height: 40px;
+      background: var(--ink);
+      color: #FFF;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+      z-index: 89;
+    }
+    .back-to-top.show { opacity: 1; visibility: visible; }
+
+    .mobile-bottom-bar {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; width: 100%;
+      background: #FFF;
+      border-top: 1px solid var(--border);
+      padding: 10px 15px;
+      z-index: 95;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+    .mobile-bottom-bar .btn { flex: 1; font-weight: 600; font-size: 14px; padding: 10px; }
+    .mobile-bottom-bar .btn-red-ghost { border: 1px solid var(--red); color: var(--red); }
+
+    /* Animation Classes */
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* Media Queries */
+    @media (max-width: 991px) {
+      .hero-content { margin-bottom: 40px; }
+      .top-bar-links { justify-content: flex-start; }
+    }
+    @media (max-width: 767px) {
+      .hero { min-height: auto; padding: 60px 0; }
+      .hero h1 { font-size: 36px; }
+      .hero .btn-ghost { margin-left: 0; margin-top: 15px; }
+      .trust-stats { flex-direction: column; gap: 15px; }
+      .stats-bar .col-6 { margin-bottom: 30px; }
+      .mobile-bottom-bar { display: flex; gap: 10px; }
+      body { padding-bottom: 60px; }
+      .whatsapp-btn { bottom: 80px; }
+      .back-to-top { bottom: 150px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Top Category Bar -->
+  <div class="top-bar">
+    <div class="container-fluid">
+      <div class="top-bar-links">
+        <a href="#">Equity Basics</a>
+        <a href="#">Price Action</a>
+        <a href="#">Intraday</a>
+        <a href="#">Swing Trading</a>
+        <a href="#">Options</a>
+        <a href="#">F&O Strategies</a>
+        <a href="#">Risk Management</a>
+        <a href="#">Mentorship</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Main Navbar -->
+  <nav class="main-nav" id="mainNav">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <!-- Logo -->
+        <a href="#" class="logo-container">
+          <img src="logo.png" alt="WE Traders Logo" onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';" style="height: 45px; width: auto; border-radius: 50%;">
+          <div class="logo-ph" style="display:none;">Logo</div>
+          <h2 class="brand-name">WeTraders</h2>
+        </a>
+        
+        <!-- Actions -->
+        <div class="nav-actions">
+          <a href="#" class="btn btn-dark d-none d-md-inline-block font-weight-bold" style="border-radius: 6px; padding: 8px 20px;">Login / Signup</a>
+          <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
+          <div class="hamburger" onclick="openNav()"><i class="fas fa-bars"></i></div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Sidenav -->
+  <div id="mySidenav" class="sidenav">
+    <span class="closebtn" onclick="closeNav()">&times;</span>
+    <div class="sidenav-content">
+      <div class="mb-4">
+        <a href="#" class="btn btn-light text-dark font-weight-bold text-center" style="border-radius: 6px;">Login / Signup</a>
+      </div>
+      <a href="#" class="poppins font-weight-bold text-uppercase mb-3" style="color: var(--green);">All Courses</a>
+      <a href="#">Equity Basics</a>
+      <a href="#">Price Action</a>
+      <a href="#">Intraday & Swing</a>
+      <a href="#">Options & Strategies</a>
+      <a href="#">Mentorship</a>
+      <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+      <a href="#">About Us</a>
+      <a href="#">Why Us</a>
+      <a href="#">Blog</a>
+      <a href="#">Contact Us</a>
+    </div>
+  </div>
+  <div class="sidenav-overlay" id="sidenavOverlay" onclick="closeNav()"></div>
+
+  <!-- 3. HERO SECTION -->
+  <section class="hero">
+    <div class="hero-pattern"></div>
+    <div class="floating-circle fc-1"></div>
+    <div class="floating-circle fc-2"></div>
+    <div class="floating-circle fc-3"></div>
+    
+    <div class="container hero-content">
+      <div class="row align-items-center">
+        <!-- Left Content -->
+        <div class="col-lg-7">
+          <div class="hero-badge">🔥 India's #1 Trading Academy</div>
+          <h1>Master the Markets.<br>Trade with <span class="text-green">Confidence.</span></h1>
+          <p class="hero-subtext">Learn price action, risk management, and options strategies from real NSE/BSE charts. No tips. No signals. Just discipline.</p>
+          
+          <div>
+            <a href="#" class="btn-green">Explore Courses &rarr;</a>
+            <a href="#" class="btn-ghost">Watch Free Intro</a>
+          </div>
+
+          <div class="trust-stats">
+            <div>
+              <div class="trust-stat-num">10+</div>
+              <div class="trust-stat-label">Years Experience</div>
+            </div>
+            <div>
+              <div class="trust-stat-num">3,400+</div>
+              <div class="trust-stat-label">Students</div>
+            </div>
+            <div>
+              <div class="trust-stat-num">500+</div>
+              <div class="trust-stat-label">Live Sessions</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Image Placeholder -->
+        <div class="col-lg-5 mt-5 mt-lg-0">
+          <div class="img-placeholder hero-ph">
+            <i class="far fa-image ph-icon"></i>
+            <span class="ph-label">Hero Image</span>
+            <span class="ph-size">Recommended: 550 &times; 450px</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Course Categories Section -->
+  <section class="section-padding">
+    <div class="container reveal">
+      <div class="text-center">
+        <h2 class="section-title">Our Trading Programs</h2>
+        <p class="section-subtitle">Choose your path to market mastery</p>
+      </div>
+      
+      <div class="row">
+        <!-- Card 1 -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <div class="course-card">
+            <div class="course-img-wrapper">
+              <div class="img-placeholder">
+                <i class="far fa-image ph-icon"></i>
+                <span class="ph-label">Course Image</span>
+                <span class="ph-size">400 &times; 225px</span>
+              </div>
+            </div>
+            <div class="course-body">
+              <span class="course-badge badge-beginner">BEGINNER</span>
+              <h3 class="course-title">Market Foundations</h3>
+              <p class="course-desc">Demat accounts, order types, indices, and how NSE/BSE actually work. Perfect for absolute beginners.</p>
+              <div class="course-price-row">
+                <span class="course-price-old">₹3,999</span>
+                <span class="course-price-new">₹1,999</span>
+              </div>
+              <button class="btn-course">View Details</button>
+              <p class="course-features">&check; 4+ Hours &nbsp;&check; Chart Cheatsheets &nbsp;&check; Community</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Card 2 -->
+        <div class="col-md-4 mb-4 mb-md-0">
+          <div class="course-card">
+            <div class="course-img-wrapper">
+              <div class="img-placeholder">
+                <i class="far fa-image ph-icon"></i>
+                <span class="ph-label">Course Image</span>
+                <span class="ph-size">400 &times; 225px</span>
+              </div>
+            </div>
+            <div class="course-body">
+              <span class="course-badge badge-popular">POPULAR</span>
+              <h3 class="course-title">Intraday &amp; Swing Mastery</h3>
+              <p class="course-desc">Entry/exit rules, stop-loss discipline, position sizing for both fast intraday and multi-day swing trades.</p>
+              <div class="course-price-row">
+                <span class="course-price-old">₹9,999</span>
+                <span class="course-price-new">₹4,999</span>
+              </div>
+              <button class="btn-course">View Details</button>
+              <p class="course-features">&check; Live Reviews &nbsp;&check; Trade Journal &nbsp;&check; Priority Support</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Card 3 -->
+        <div class="col-md-4">
+          <div class="course-card">
+            <div class="course-img-wrapper">
+              <div class="img-placeholder">
+                <i class="far fa-image ph-icon"></i>
+                <span class="ph-label">Course Image</span>
+                <span class="ph-size">400 &times; 225px</span>
+              </div>
+            </div>
+            <div class="course-body">
+              <span class="course-badge badge-elite">ELITE</span>
+              <h3 class="course-title">Options &amp; Elite Mentorship</h3>
+              <p class="course-desc">Calls, puts, spreads, hedging — plus 6 months of 1-on-1 mentorship with personal trade plan reviews.</p>
+              <div class="course-price-row">
+                <span class="course-price-old">₹50,000</span>
+                <span class="course-price-new">₹25,000</span>
+              </div>
+              <button class="btn-course">View Details</button>
+              <p class="course-features">&check; 1-on-1 Calls &nbsp;&check; Portfolio Review &nbsp;&check; Certificate</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Why Choose WeTraders -->
+  <section class="section-padding bg-section">
+    <div class="container reveal">
+      <div class="text-center">
+        <h2 class="section-title">Why Choose WeTraders?</h2>
+        <br><br>
+      </div>
+      <div class="row text-center">
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="feature-icon-ph">📊</div>
+          <h4 class="feature-title">Real Chart Training</h4>
+          <p class="feature-desc">Every lesson built from live NSE and BSE charts — not simulated data.</p>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="feature-icon-ph">🎯</div>
+          <h4 class="feature-title">Price Action Focus</h4>
+          <p class="feature-desc">Learn how institutions build positions and how orders move price.</p>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="feature-icon-ph">♾️</div>
+          <h4 class="feature-title">Lifetime Access</h4>
+          <p class="feature-desc">All recordings, materials, templates, and future updates — forever.</p>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="feature-icon-ph">🤝</div>
+          <h4 class="feature-title">Personal Mentorship</h4>
+          <p class="feature-desc">1-on-1 trade plan reviews, journal audits, and direct query access.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Founder Section -->
+  <section class="section-padding">
+    <div class="container reveal">
+      <div class="row align-items-center">
+        <div class="col-md-5 mb-5 mb-md-0">
+          <div class="img-wrapper-4x5">
+            <img src="founder.jpg" alt="Arjun Sahu - Founder of WeTraders" onerror="this.onerror=null; this.src='https://via.placeholder.com/400x500/1A1A2E/FFFFFF?text=Arjun+Sahu+(Founder)';" style="width:100%; height:100%; object-fit:cover; border-radius:12px; box-shadow: var(--card-shadow);">
+          </div>
+        </div>
+        <div class="col-md-7 pl-md-5">
+          <span class="founder-badge">MEET THE FOUNDER</span>
+          <h3 class="poppins font-weight-bold mt-3 mb-2" style="font-size: 22px; color: var(--red);">Arjun Sahu</h3>
+          <h2 class="poppins font-weight-bold mb-4" style="font-size: 28px;">A Trader Who Teaches What He Practices</h2>
+          
+          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">Most people don't lose money in the market because they lack information — they lose it because no one taught them how to read a chart, size a position, or sit on their hands.</p>
+          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">This course exists to fix that. Every lesson is built from real, unfiltered NSE and BSE charts — not backtested fantasies.</p>
+          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">No signals to copy. No 'guaranteed returns.' Just the mechanics of the market and the discipline to use them.</p>
+          
+          <!-- AZP Concept Box -->
+          <div class="azp-box mt-4 p-3" style="background: rgba(230, 57, 70, 0.05); border-left: 4px solid var(--red); border-radius: 8px;">
+            <h4 style="font-size: 16px; font-weight: 700; color: var(--red);" class="mb-1">
+              <i class="fas fa-chart-line mr-2"></i>The AZP Concept (A-to-Z Price Action)
+            </h4>
+            <p style="font-size: 14px; color: var(--ink-dim); margin-bottom: 0;">
+              Developed by Arjun Sahu, the <strong>AZP Concept</strong> focuses on institutional order flow, risk-reward control, and systematic market structure reading — helping traders eliminate guesswork and build sustainable consistency.
+            </p>
+          </div>
+
+          <div class="founder-stats mt-4">
+            <div>
+              <div class="f-stat-num">10+</div>
+              <div class="f-stat-label">Years Trading</div>
+            </div>
+            <div>
+              <div class="f-stat-num">3,400+</div>
+              <div class="f-stat-label">Students Mentored</div>
+            </div>
+            <div>
+              <div class="f-stat-num">500+</div>
+              <div class="f-stat-label">Live Sessions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Stats Counter Bar -->
+  <section class="stats-bar" id="statsSection">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-3 col-6">
+          <div class="counter-num poppins"><span class="counter" data-target="10">0</span>+</div>
+          <div class="counter-label">Years Experience</div>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="counter-num poppins"><span class="counter" data-target="3400">0</span>+</div>
+          <div class="counter-label">Students Trained</div>
+        </div>
+        <div class="col-md-3 col-6 mt-4 mt-md-0">
+          <div class="counter-num poppins"><span class="counter" data-target="500">0</span>+</div>
+          <div class="counter-label">Live Sessions</div>
+        </div>
+        <div class="col-md-3 col-6 mt-4 mt-md-0">
+          <div class="counter-num poppins"><span class="counter" data-target="4.9" data-decimal="true">0</span>&starf;</div>
+          <div class="counter-label">Student Rating</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7b. Finance Consultant Section -->
+  <section class="section-padding bg-white">
+    <div class="container reveal">
+      <div class="row align-items-center">
+        <div class="col-md-5 mb-5 mb-md-0">
+          <div class="img-wrapper-4x5">
+            <img src="biswajit.jpg" alt="Mr. Biswajit Bharati - Finance Consultant" 
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x500/002147/FFFFFF?text=Mr.+Biswajit+Bharati+(Finance+Consultant)';" 
+                 style="width:100%; height:100%; object-fit:cover; border-radius:12px; box-shadow: var(--card-shadow);">
+          </div>
+        </div>
+        <div class="col-md-7 pl-md-5">
+          <span class="founder-badge" style="background: rgba(0, 200, 83, 0.1); color: var(--green-dark);">FINANCE & STRATEGIC CONSULTANT</span>
+          <h3 class="poppins font-weight-bold mt-3 mb-2" style="font-size: 24px; color: var(--ink);">Mr. Biswajit Bharati</h3>
+          <h2 class="poppins font-weight-bold mb-4" style="font-size: 26px; color: var(--green-dark);">Financial Planning & Capital Management</h2>
+          
+          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">
+            Mr. Biswajit Bharati serves as the Senior Finance & Strategic Consultant at WeTraders. With deep expertise in wealth management, capital allocation, and market risk advisory, he provides guidance to help traders structure their capital wisely.
+          </p>
+          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">
+            His advisory framework emphasizes long-term wealth protection, portfolio diversification, and building sustainable financial habits alongside active market trading.
+          </p>
+
+          <div class="row mt-4">
+            <div class="col-6">
+              <div class="p-3" style="background: var(--bg-soft); border-radius: 8px;">
+                <div style="font-weight: 700; color: var(--ink); font-size: 15px;"><i class="fas fa-coins text-success mr-2"></i>Wealth Advisory</div>
+                <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Strategic Capital Growth</div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="p-3" style="background: var(--bg-soft); border-radius: 8px;">
+                <div style="font-weight: 700; color: var(--ink); font-size: 15px;"><i class="fas fa-shield-alt text-primary mr-2"></i>Risk Management</div>
+                <div style="font-size: 13px; color: var(--muted); margin-top: 4px;">Capital Protection & Structuring</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. Testimonials Section -->
+  <section class="section-padding bg-section">
+    <div class="container reveal">
+      <div class="text-center">
+        <h2 class="section-title">What Our Students Say</h2>
+        <br><br>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <div class="testi-card">
+            <div class="stars">&starf;&starf;&starf;&starf;&starf;</div>
+            <p class="testi-quote">"I stopped chasing tips after Module 2. My win rate didn't change much — but my losses got a lot smaller."</p>
+            <div class="testi-divider"></div>
+            <div class="d-flex align-items-center">
+              <div class="avatar-ph mr-3"></div>
+              <div>
+                <div class="testi-author">Rohit S.</div>
+                <div class="testi-course">Swing Trading Mastery</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <div class="testi-card">
+            <div class="stars">&starf;&starf;&starf;&starf;&starf;</div>
+            <p class="testi-quote">"First course that actually explained why a trade works, not just which button to press."</p>
+            <div class="testi-divider"></div>
+            <div class="d-flex align-items-center">
+              <div class="avatar-ph mr-3"></div>
+              <div>
+                <div class="testi-author">Ananya D.</div>
+                <div class="testi-course">Market Foundations</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testi-card">
+            <div class="stars">&starf;&starf;&starf;&starf;&starf;</div>
+            <p class="testi-quote">"The mentorship calls alone were worth it. Someone finally reviewed my trade journal and told me the truth."</p>
+            <div class="testi-divider"></div>
+            <div class="d-flex align-items-center">
+              <div class="avatar-ph mr-3"></div>
+              <div>
+                <div class="testi-author">Kabir M.</div>
+                <div class="testi-course">Elite Mentorship</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. CTA Banner Section -->
+  <section class="cta-banner">
+    <svg class="chart-bg" viewBox="0 0 500 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 150 L50 120 L100 130 L150 80 L200 100 L250 50 L300 70 L350 20 L400 40 L500 0" stroke="white" stroke-width="4"/>
+    </svg>
+    <div class="container text-center reveal">
+      <h2>Ready to Start Your Trading Journey?</h2>
+      <p>Join 3,400+ students who've built a real trading process.</p>
+      <a href="#" class="btn-cta">Explore Courses &rarr;</a>
+    </div>
+  </section>
+
+  <!-- 10. App Download / Free Resources Section -->
+  <section class="section-padding">
+    <div class="container reveal">
+      <div class="row align-items-center">
+        <div class="col-md-6 mb-4 mb-md-0">
+          <div class="resource-banner-wrapper">
+            <div class="img-placeholder">
+              <i class="far fa-file-alt ph-icon"></i>
+              <span class="ph-label">App Screenshot / Resource Banner</span>
+              <span class="ph-size">500 &times; 340px</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 pl-md-5">
+          <h3 class="poppins font-weight-bold mb-3">Free Trading Resources</h3>
+          <p style="color: var(--ink-dim); margin-bottom: 25px;">Get access to our free chart cheatsheets, trading journal template, and market analysis videos.</p>
+          <ul class="resource-list">
+            <li><i class="fas fa-check-circle"></i> Candlestick Pattern Cheatsheet</li>
+            <li><i class="fas fa-check-circle"></i> Trading Journal Template (Excel)</li>
+            <li><i class="fas fa-check-circle"></i> Weekly Market Analysis Videos</li>
+          </ul>
+          <button class="btn-red">Download Free Resources</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <!-- Col 1 -->
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <img src="logo.png" alt="WE Traders Logo" style="height: 50px; width: auto; border-radius: 50%; margin-bottom: 12px;">
+          <h4 class="poppins font-weight-bold text-white mb-2" style="font-size: 20px;">WE Traders</h4>
+          <p style="font-size: 14px; margin-bottom: 15px;">Learn • Analyze • Trade • Grow</p>
+          <p style="font-size: 14px; margin-bottom: 8px;"><i class="fab fa-whatsapp mr-2"></i> +91 7585959653</p>
+          <p style="font-size: 13px; opacity: 0.7;">💡 Make Your Own Decision.</p>
+        </div>
+        
+        <!-- Col 2 -->
+        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+          <h5 class="footer-title">Quick Links</h5>
+          <ul class="footer-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">All Courses</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        
+        <!-- Col 3 -->
+        <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+          <h5 class="footer-title">Our Courses</h5>
+          <ul class="footer-links">
+            <li><a href="#">Market Foundations</a></li>
+            <li><a href="#">Intraday & Swing</a></li>
+            <li><a href="#">Options & Mentorship</a></li>
+            <li><a href="#">Free Resources</a></li>
+          </ul>
+        </div>
+        
+        <!-- Col 4 -->
+        <div class="col-lg-3 col-md-6">
+          <h5 class="footer-title">Legal</h5>
+          <ul class="footer-links">
+            <li><a href="#">Terms & Conditions</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Refund Policy</a></li>
+            <li><a href="#">Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="social-icons mt-4">
+        <a href="https://www.facebook.com/WETraders1" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/wetraderss" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@WE-Traders" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://t.me/wetraders12" target="_blank" title="Telegram"><i class="fab fa-telegram-plane"></i></a>
+      </div>
+      
+      <div class="footer-divider"></div>
+      
+      <p class="sebi-text">WeTraders is an educational institute. We are not SEBI registered advisors. We do not provide stock tips, buy/sell calls, or guaranteed returns. Trading involves significant risk.</p>
+      
+      <p class="copyright">&copy; 2026 WeTraders. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- 12. Floating Elements -->
+  <!-- WhatsApp -->
+  <a href="https://wa.me/917585959653" target="_blank" class="whatsapp-btn" title="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <!-- Back to top -->
+  <div class="back-to-top" id="backToTop" onclick="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+  
+  <!-- Mobile Bottom Bar -->
+  <div class="mobile-bottom-bar">
+    <a href="https://wa.me/917585959653" target="_blank" class="btn btn-green text-center text-white" style="border-radius: 6px;">WhatsApp Us</a>
+    <a href="tel:+917585959653" class="btn btn-red-ghost text-center" style="border-radius: 6px;">Call Us</a>
+  </div>
+
+  <!-- JS -->
+  <script>
+    // 1. Sticky Navbar
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('mainNav');
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+      
+      // Back to top button
+      const btt = document.getElementById('backToTop');
+      if (window.scrollY > 300) {
+        btt.classList.add('show');
+      } else {
+        btt.classList.remove('show');
+      }
+    });
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 2. Sidenav
+    function openNav() {
+      document.getElementById("mySidenav").classList.add("open");
+      document.getElementById("sidenavOverlay").style.display = "block";
+      document.body.style.overflow = "hidden";
+    }
+    function closeNav() {
+      document.getElementById("mySidenav").classList.remove("open");
+      document.getElementById("sidenavOverlay").style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+
+    // 3. Counter Animation
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200; 
+
+    const animateCounters = () => {
+      counters.forEach(counter => {
+        const updateCount = () => {
+          const target = +counter.getAttribute('data-target');
+          const isDecimal = counter.getAttribute('data-decimal') === 'true';
+          const count = +counter.innerText;
+          
+          let inc = target / speed;
+          if (isDecimal) inc = 0.1;
+
+          if(count < target) {
+            if (isDecimal) {
+              counter.innerText = (count + inc).toFixed(1);
+            } else {
+              counter.innerText = Math.ceil(count + inc);
+            }
+            setTimeout(updateCount, 15);
+          } else {
+            if (isDecimal) {
+              counter.innerText = target.toFixed(1);
+            } else {
+              counter.innerText = target;
+            }
+          }
+        };
+        updateCount();
+      });
+    }
+
+    // Intersection Observer for Counters & Reveal
+    const observerOptions = {
+      root: null,
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px"
+    };
+
+    let counterStarted = false;
+    const observer = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(entry => {
+        // Reveal animation
+        if (entry.isIntersecting && entry.target.classList.contains('reveal')) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
+        
+        // Counter animation
+        if (entry.isIntersecting && entry.target.id === 'statsSection' && !counterStarted) {
+          animateCounters();
+          counterStarted = true;
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => {
+      observer.observe(el);
+    });
+    observer.observe(document.getElementById('statsSection'));
+
+  </script>
+</body>
+</html>
