@@ -97,7 +97,13 @@
       display: flex;
       gap: 24px;
       justify-content: center;
-      padding: 0 15px;
+    /* Mobile Responsive Profile Image */
+    @media (max-width: 768px) {
+      .founder-profile-img {
+        max-width: 280px !important;
+        margin: 0 auto 24px auto !important;
+        display: block !important;
+      }
     }
     .top-bar-links a {
       color: #FFF;
@@ -547,13 +553,13 @@
   <div class="top-bar">
     <div class="container-fluid">
       <div class="top-bar-links">
-        <a href="#">Equity Basics</a>
-        <a href="#">Price Action</a>
-        <a href="#">Intraday</a>
-        <a href="#">Swing Trading</a>
-        <a href="#">Options</a>
-        <a href="#">F&O Strategies</a>
-        <a href="#">Risk Management</a>
+        <a href="#">Indian Market (NSE &amp; BSE)</a>
+        <a href="#">Crypto</a>
+        <a href="#">Forex</a>
+        <a href="#">AZP Strategy (90 Days)</a>
+        <a href="#">Pure Price Action</a>
+        <a href="#">Intraday &amp; Swing</a>
+        <a href="#">Options &amp; Risk</a>
         <a href="#">Mentorship</a>
       </div>
     </div>
@@ -615,7 +621,7 @@
         <div class="col-lg-7">
           <div class="hero-badge">🔥 India's #1 Trading Academy</div>
           <h1>Master the Markets.<br>Trade with <span class="text-green">Confidence.</span></h1>
-          <p class="hero-subtext">Learn price action, risk management, and options strategies from real NSE/BSE charts. No tips. No signals. Just discipline.</p>
+          <p class="hero-subtext">Learn price action, risk management, and institutional trading strategies across Indian Market (NSE &amp; BSE), Crypto, and Forex. No tips. No signals. Just discipline.</p>
           
           <div>
             <a href="#" class="btn-green">Explore Courses &rarr;</a>
@@ -624,15 +630,15 @@
 
           <div class="trust-stats">
             <div>
-              <div class="trust-stat-num">10+</div>
+              <div class="trust-stat-num">7+</div>
               <div class="trust-stat-label">Years Experience</div>
             </div>
             <div>
-              <div class="trust-stat-num">3,400+</div>
+              <div class="trust-stat-num">700+</div>
               <div class="trust-stat-label">Students</div>
             </div>
             <div>
-              <div class="trust-stat-num">500+</div>
+              <div class="trust-stat-num">700+</div>
               <div class="trust-stat-label">Live Sessions</div>
             </div>
           </div>
@@ -774,8 +780,8 @@
     <div class="container reveal">
       <div class="row align-items-center">
         <div class="col-md-5 mb-5 mb-md-0">
-          <div class="img-wrapper-4x5 text-center">
-            <img src="founder.jpg" alt="Arjun Sahu - Founder of WeTraders" onerror="this.onerror=null; this.src='founder.jpeg';" style="width:100%; max-width: 420px; height: auto; border-radius: 50%; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+          <div class="img-wrapper-4x5 text-center mb-4 mb-md-0">
+            <img src="founder.jpg" alt="Arjun Sahu - Founder of WeTraders" class="founder-profile-img" onerror="this.onerror=null; this.src='founder.jpeg';" style="width:100%; max-width: 400px; height: auto; border-radius: 50%; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
           </div>
         </div>
         <div class="col-md-7 pl-md-5">
@@ -783,23 +789,23 @@
           <h3 class="poppins font-weight-bold mt-3 mb-2" style="font-size: 22px; color: var(--red);">Arjun Sahu</h3>
           <h2 class="poppins font-weight-bold mb-4" style="font-size: 28px;">A Trader Who Teaches What He Practices</h2>
           
-          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">Most people don't lose money in the market because they lack information — they lose it because no one taught them how to read a chart, size a position, or sit on their hands.</p>
-          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">This course exists to fix that. Every lesson is built from real, unfiltered NSE and BSE charts — not backtested fantasies.</p>
-          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">No signals to copy. No 'guaranteed returns.' Just the mechanics of the market and the discipline to use them.</p>
+          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">Trading and mentoring since 2020, Arjun Sahu brings 7+ years of market mastery across the Indian Market (NSE &amp; BSE), Crypto, and Forex.</p>
+          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">Most people don't lose money in the market because they lack information — they lose it because no one taught them how to read a chart, size a position, or sit on their hands. Every lesson is built from real, live market structures — not backtested fantasies.</p>
+          <p style="color: var(--ink-dim); line-height: 1.7; font-size: 15px;">No signals to copy. No 'guaranteed returns.' Just pure mechanics of the market and the discipline to execute them.</p>
           
           <!-- AZP Concept Box -->
           <div class="azp-box mt-4 p-4" style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.96) 0%, rgba(13, 34, 58, 0.96) 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-left: 5px solid #D4AF37; border-radius: 12px; color: #FFFFFF; box-shadow: var(--card-shadow);">
             <div class="d-flex align-items-center justify-content-between flex-wrap mb-2">
               <h4 style="font-size: 19px; font-weight: 700; color: #D4AF37;" class="mb-0">
-                <i class="fas fa-crown mr-2"></i>AZP CONCEPT — Complete Trading Course
+                <i class="fas fa-crown mr-2"></i>AZP CONCEPT — 90 Days Strategy
               </h4>
               <span class="badge px-3 py-2 mt-2 mt-sm-0" style="background: var(--red-gradient); color: #FFF; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; border-radius: 20px;">
-                120 DAYS TO MASTER INSTITUTIONAL TRADING
+                AZP STRATEGY: 90 DAYS TO MASTER TRADING
               </span>
             </div>
             
             <p style="font-size: 14px; color: #E2E8F0; line-height: 1.6;" class="mt-2 mb-3">
-              Developed by <strong>Arjun Sahu</strong>, the AZP Concept is an intensive 120-day institutional trading framework engineered to eliminate guesswork and build disciplined, market-ready traders.
+              Developed by <strong>Arjun Sahu</strong> (trading since 2020), the <strong>AZP Strategy</strong> is a comprehensive 90-day institutional trading framework covering the Indian Market (NSE &amp; BSE), Crypto, and Forex.
             </p>
 
             <div class="azp-highlights-title font-weight-bold mb-2" style="color: #D4AF37; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;">
@@ -833,15 +839,15 @@
 
           <div class="founder-stats mt-4">
             <div>
-              <div class="f-stat-num">10+</div>
-              <div class="f-stat-label">Years Trading</div>
+              <div class="f-stat-num">7+</div>
+              <div class="f-stat-label">Years Experience</div>
             </div>
             <div>
-              <div class="f-stat-num">3,400+</div>
+              <div class="f-stat-num">700+</div>
               <div class="f-stat-label">Students Mentored</div>
             </div>
             <div>
-              <div class="f-stat-num">500+</div>
+              <div class="f-stat-num">700+</div>
               <div class="f-stat-label">Live Sessions</div>
             </div>
           </div>
@@ -855,15 +861,15 @@
     <div class="container">
       <div class="row text-center">
         <div class="col-md-3 col-6">
-          <div class="counter-num poppins"><span class="counter" data-target="10">0</span>+</div>
+          <div class="counter-num poppins"><span class="counter" data-target="7">0</span>+</div>
           <div class="counter-label">Years Experience</div>
         </div>
         <div class="col-md-3 col-6">
-          <div class="counter-num poppins"><span class="counter" data-target="3400">0</span>+</div>
+          <div class="counter-num poppins"><span class="counter" data-target="700">0</span>+</div>
           <div class="counter-label">Students Trained</div>
         </div>
         <div class="col-md-3 col-6 mt-4 mt-md-0">
-          <div class="counter-num poppins"><span class="counter" data-target="500">0</span>+</div>
+          <div class="counter-num poppins"><span class="counter" data-target="700">0</span>+</div>
           <div class="counter-label">Live Sessions</div>
         </div>
         <div class="col-md-3 col-6 mt-4 mt-md-0">
