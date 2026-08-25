@@ -1623,7 +1623,9 @@
         await signInWithPopup(auth, googleProvider);
       } catch (error) {
         console.error("Auth error:", error);
-        if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
+        if (error.code === "auth/unauthorized-domain") {
+          alert("Domain Authorization Note: 'ciyindia.com' is not yet in the Firebase Authorized Domains list. Please add 'ciyindia.com' in Firebase Console > Authentication > Settings > Authorized Domains.");
+        } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
           alert("Login error: " + error.message);
         }
       }
