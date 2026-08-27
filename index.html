@@ -808,10 +808,10 @@
         <!-- Actions -->
         <div class="nav-actions">
           <div id="authDesktopContainer" class="d-none d-md-inline-block">
-            <button onclick="loginWithGoogle()" class="btn btn-dark font-weight-bold d-flex align-items-center" style="border-radius: 6px; padding: 8px 18px; gap: 8px; font-size: 14px;">
-              <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.2s.7 5.5 1.9 7.9l3.7-2.9z"/><path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"/></svg>
+            <a href="login.html" class="btn btn-dark font-weight-bold d-flex align-items-center" style="border-radius: 6px; padding: 8px 18px; gap: 8px; font-size: 14px;">
+              <i class="fas fa-user-circle"></i>
               Login / Signup
-            </button>
+            </a>
           </div>
           <a href="#" class="cart-icon"><i class="fas fa-shopping-cart"></i></a>
           <div class="hamburger" onclick="openNav()"><i class="fas fa-bars"></i></div>
@@ -825,10 +825,10 @@
     <span class="closebtn" onclick="closeNav()">&times;</span>
     <div class="sidenav-content">
       <div id="authMobileContainer" class="mb-4">
-        <button onclick="loginWithGoogle(); closeNav();" class="btn btn-light text-dark font-weight-bold text-center w-100 d-flex align-items-center justify-content-center" style="border-radius: 6px; padding: 10px; gap: 8px; font-size: 14px;">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.2s.7 5.5 1.9 7.9l3.7-2.9z"/><path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"/></svg>
-          Sign in with Google
-        </button>
+        <a href="login.html" class="btn btn-light text-dark font-weight-bold text-center w-100 d-flex align-items-center justify-content-center" style="border-radius: 6px; padding: 10px; gap: 8px; font-size: 14px;">
+          <i class="fas fa-user-circle"></i>
+          Student Portal
+        </a>
       </div>
       <a href="#" class="poppins font-weight-bold text-uppercase mb-3" style="color: var(--green);">All Courses</a>
       <a href="#">Equity Basics</a>
@@ -1558,6 +1558,9 @@
                   <div class="font-weight-bold" style="font-size: 14px; color: var(--ink);">${displayName}</div>
                   <div style="font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis;">${user.email}</div>
                 </div>
+                <a href="dashboard.html" class="btn btn-sm btn-link text-dark w-100 text-left font-weight-bold p-2" style="font-size: 13px; text-decoration: none; border-radius: 6px;">
+                  <i class="fas fa-th-large mr-2"></i> Student Portal
+                </a>
                 <button class="btn btn-sm btn-link text-danger w-100 text-left font-weight-bold p-2" onclick="logoutUser()" style="font-size: 13px; text-decoration: none; border-radius: 6px;">
                   <i class="fas fa-sign-out-alt mr-2"></i> Logout
                 </button>
@@ -1576,6 +1579,9 @@
                   <div style="font-size: 12px; color: #8E8EA0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${user.email}</div>
                 </div>
               </div>
+              <a href="dashboard.html" class="btn btn-outline-light btn-sm w-100 mt-2 font-weight-bold" style="border-radius: 6px;">
+                <i class="fas fa-th-large mr-1"></i> Student Portal
+              </a>
               <button class="btn btn-outline-danger btn-sm w-100 mt-3 font-weight-bold" onclick="logoutUser(); closeNav();" style="border-radius: 6px;">
                 <i class="fas fa-sign-out-alt mr-1"></i> Logout
               </button>

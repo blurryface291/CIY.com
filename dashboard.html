@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal — WeTraders Institute</title>
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --red: #E63946; --red-dark: #B71C1C;
+      --green: #00C853; --green-dark: #00893E;
+      --gold: #D4AF37; --gold-light: #F3D884;
+      --bg: #0F1120; --bg-card: #181B2E; --bg-sidebar: #141628;
+      --ink: #FFFFFF; --ink-dim: #A0A3BD; --muted: #6B6F8D;
+      --border: rgba(255,255,255,0.08);
+      --sidebar-w: 260px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Mulish', sans-serif; background: var(--bg); color: var(--ink); display: flex; }
+    h1,h2,h3,h4,h5,h6,.poppins { font-family: 'Poppins', sans-serif; }
+    a { color: var(--gold); text-decoration: none; }
+    a:hover { color: var(--gold-light); text-decoration: none; }
+
+    /* Loading Screen */
+    #loadingScreen {
+      position: fixed; inset: 0; z-index: 9999; background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+    }
+    .loader { width: 48px; height: 48px; border: 4px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Meeting Bar */
+    #meetingBar {
+      background: linear-gradient(90deg, #00C853, #00893E);
+      color: #FFF; padding: 10px 20px; font-size: 13px; font-weight: 600;
+      display: none; align-items: center; gap: 12px; flex-shrink: 0; flex-wrap: wrap;
+    }
+    #meetingBar .meeting-item { display: flex; align-items: center; gap: 8px; }
+    #meetingBar .join-btn {
+      background: #FFF; color: var(--green-dark); padding: 4px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s;
+    }
+    #meetingBar .join-btn:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+
+    /* Sidebar */
+    .sidebar {
+      width: var(--sidebar-w); background: var(--bg-sidebar); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto;
+      transition: transform 0.3s ease;
+    }
+    .sidebar-header {
+      padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px;
+    }
+    .sidebar-header img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    .sidebar-header .brand { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 16px; }
+    .sidebar-header .brand-sub { font-size: 11px; color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .sidebar-nav { flex: 1; padding: 12px 0; }
+    .sidebar-section { padding: 8px 20px; font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 8px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; padding: 11px 20px; font-size: 14px; font-weight: 500;
+      color: var(--ink-dim); cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--ink); }
+    .nav-item.active { background: rgba(212,175,55,0.08); color: var(--gold); border-left-color: var(--gold); font-weight: 600; }
+    .nav-item i { width: 20px; text-align: center; font-size: 15px; }
+    .nav-item .badge-count {
+      margin-left: auto; background: var(--red); color: #FFF; font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 10px; min-width: 20px; text-align: center;
+    }
+    .admin-only, .master-only { display: none; }
+
+    .sidebar-user {
+      padding: 16px 20px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-user img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); }
+    .sidebar-user .user-info { flex: 1; overflow: hidden; }
+    .sidebar-user .user-name { font-weight: 600; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sidebar-user .user-role { font-size: 11px; color: var(--gold); text-transform: uppercase; font-weight: 600; }
+    .sidebar-user .logout-btn { color: var(--muted); font-size: 18px; cursor: pointer; transition: 0.2s; }
+    .sidebar-user .logout-btn:hover { color: var(--red); }
+
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .main-content { flex: 1; overflow-y: auto; padding: 30px; }
+    .content-section { display: none; }
+    .content-section.active { display: block; }
+
+    .top-header {
+      padding: 16px 30px; border-bottom: 1px solid var(--border); display: flex;
+      align-items: center; justify-content: space-between; flex-shrink: 0; background: var(--bg);
+    }
+    .top-header h4 { font-weight: 600; font-size: 20px; margin: 0; }
+    .top-header .mobile-toggle { display: none; font-size: 22px; color: var(--ink); cursor: pointer; margin-right: 16px; }
+
+    .portal-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; margin-bottom: 20px; transition: 0.2s;
+    }
+    .portal-card:hover { border-color: rgba(255,255,255,0.15); }
+    .portal-card h5 { font-weight: 600; font-size: 17px; margin-bottom: 6px; }
+    .portal-card .card-meta { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+    .portal-card p { font-size: 14px; color: var(--ink-dim); line-height: 1.6; }
+
+    .announce-card { border-left: 4px solid var(--gold); }
+    .announce-card.priority-high { border-left-color: var(--red); }
+    .announce-card.priority-meeting { border-left-color: var(--green); }
+    .announce-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+    .badge-normal { background: rgba(212,175,55,0.15); color: var(--gold); }
+    .badge-high { background: rgba(230,57,70,0.15); color: var(--red); }
+    .badge-meeting { background: rgba(0,200,83,0.15); color: var(--green); }
+
+    .material-card { display: flex; align-items: center; gap: 16px; }
+    .material-icon { width: 48px; height: 48px; background: rgba(212,175,55,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--gold); flex-shrink: 0; }
+    .material-info { flex: 1; }
+    .material-info h6 { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+    .material-info .mat-desc { font-size: 13px; color: var(--muted); }
+    .download-btn { background: var(--gold); color: #1A1A2E; border: none; padding: 6px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .download-btn:hover { background: var(--gold-light); }
+
+    .video-card .video-thumb { aspect-ratio: 16/9; background: #000; border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+    .video-card .video-thumb iframe { width: 100%; height: 100%; border: none; }
+
+    .schedule-item { display: flex; align-items: center; gap: 16px; }
+    .schedule-date {
+      width: 56px; height: 56px; background: rgba(230,57,70,0.1); border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .schedule-date .s-day { font-weight: 700; font-size: 18px; color: var(--red); line-height: 1; }
+    .schedule-date .s-month { font-size: 10px; color: var(--red); font-weight: 600; text-transform: uppercase; }
+
+    .payment-status { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .status-paid { background: rgba(0,200,83,0.15); color: var(--green); }
+    .status-pending { background: rgba(212,175,55,0.15); color: var(--gold); }
+    .status-overdue { background: rgba(230,57,70,0.15); color: var(--red); }
+
+    .magazine-card { text-align: center; }
+    .magazine-cover { width: 100%; aspect-ratio: 3/4; background: var(--bg); border-radius: 8px; overflow: hidden; margin-bottom: 12px; border: 1px solid var(--border); }
+    .magazine-cover img { width: 100%; height: 100%; object-fit: cover; }
+
+    .admin-form { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+    .admin-form h5 { color: var(--gold); font-weight: 600; margin-bottom: 20px; }
+    .form-dark { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--ink); border-radius: 8px; padding: 10px 14px; font-size: 14px; width: 100%; }
+    .form-dark:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 2px rgba(212,175,55,0.2); }
+    .form-dark::placeholder { color: var(--muted); }
+    select.form-dark { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B6F8D' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-color: rgba(255,255,255,0.04); padding-right: 32px; }
+    select.form-dark option { background: var(--bg-card); color: var(--ink); }
+    textarea.form-dark { min-height: 80px; resize: vertical; }
+    label.form-label { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin-bottom: 6px; display: block; }
+    .btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #1A1A2E; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; }
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,175,55,0.3); }
+    .btn-danger { background: var(--red); color: #FFF; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .btn-outline-gold { border: 1px solid var(--gold); color: var(--gold); background: transparent; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .btn-outline-gold:hover { background: rgba(212,175,55,0.1); }
+
+    .user-table { width: 100%; border-collapse: collapse; }
+    .user-table th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: left; }
+    .user-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+    .user-table tr:hover { background: rgba(255,255,255,0.02); }
+    .role-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+    .role-student { background: rgba(59,130,246,0.15); color: #60A5FA; }
+    .role-admin { background: rgba(212,175,55,0.15); color: var(--gold); }
+    .role-masterAdmin { background: rgba(230,57,70,0.15); color: var(--red); }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
+    .empty-state p { font-size: 15px; }
+
+    #toast {
+      position: fixed; bottom: 30px; right: 30px; background: var(--green); color: #FFF;
+      padding: 14px 24px; border-radius: 10px; font-weight: 600; font-size: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3); z-index: 9999; transform: translateY(100px);
+      opacity: 0; transition: all 0.3s ease;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.error { background: var(--red); }
+
+    .mobile-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; }
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; z-index: 999; transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .mobile-overlay.show { display: block; }
+      .top-header .mobile-toggle { display: block; }
+      .main-content { padding: 20px 16px; }
+      #meetingBar { padding: 8px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loadingScreen">
+    <div class="loader"></div>
+    <p style="color: var(--muted); font-size: 14px;">Loading portal...</p>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="wetraders-logo-master.png" alt="WeTraders" onerror="this.onerror=null;this.src='logo.png';">
+      <div>
+        <div class="brand">WeTraders</div>
+        <div class="brand-sub">Student Portal</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Main</div>
+      <div class="nav-item active" data-section="announcements" onclick="showSection('announcements')">
+        <i class="fas fa-bullhorn"></i> Announcements <span class="badge-count" id="announceBadge" style="display:none;">0</span>
+      </div>
+      <div class="nav-item" data-section="materials" onclick="showSection('materials')">
+        <i class="fas fa-book-open"></i> Study Materials
+      </div>
+      <div class="nav-item" data-section="videos" onclick="showSection('videos')">
+        <i class="fas fa-play-circle"></i> Videos
+      </div>
+      <div class="nav-item" data-section="schedule" onclick="showSection('schedule')">
+        <i class="fas fa-calendar-alt"></i> Class Schedule
+      </div>
+      <div class="nav-item" data-section="payments" onclick="showSection('payments')">
+        <i class="fas fa-credit-card"></i> Payment Details
+      </div>
+      <div class="nav-item" data-section="magazines" onclick="showSection('magazines')">
+        <i class="fas fa-newspaper"></i> Monthly Magazines
+      </div>
+
+      <div class="admin-only">
+        <div class="sidebar-section">Admin</div>
+        <div class="nav-item" data-section="manage-content" onclick="showSection('manage-content')">
+          <i class="fas fa-edit"></i> Manage Content
+        </div>
+        <div class="nav-item" data-section="schedule-meeting" onclick="showSection('schedule-meeting')">
+          <i class="fas fa-video"></i> Schedule Meeting
+        </div>
+        <div class="nav-item" data-section="manage-payments" onclick="showSection('manage-payments')">
+          <i class="fas fa-wallet"></i> Manage Payments
+        </div>
+      </div>
+
+      <div class="master-only">
+        <div class="sidebar-section">Master Admin</div>
+        <div class="nav-item" data-section="user-management" onclick="showSection('user-management')">
+          <i class="fas fa-users-cog"></i> User Management
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-user" id="sidebarUser">
+      <img src="" alt="" id="userAvatar">
+      <div class="user-info">
+        <div class="user-name" id="userName">Loading...</div>
+        <div class="user-role" id="userRoleLabel">student</div>
+      </div>
+      <i class="fas fa-sign-out-alt logout-btn" onclick="handleLogout()" title="Logout"></i>
+    </div>
+  </aside>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+    <!-- Meeting Bar -->
+    <div id="meetingBar"></div>
+
+    <!-- Top Header -->
+    <div class="top-header">
+      <div class="d-flex align-items-center">
+        <i class="fas fa-bars mobile-toggle" onclick="toggleSidebar()"></i>
+        <h4 id="sectionTitle">Announcements</h4>
+      </div>
+      <a href="index.html" style="font-size: 13px; color: var(--muted);"><i class="fas fa-home mr-1"></i> Back to Home</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+      <!-- ANNOUNCEMENTS -->
+      <div class="content-section active" id="sec-announcements">
+        <div id="announcementsList"></div>
+        <div class="empty-state" id="emptyAnnouncements" style="display:none;">
+          <i class="fas fa-bullhorn d-block"></i>
+          <p>No announcements yet.</p>
+        </div>
+      </div>
+
+      <!-- STUDY MATERIALS -->
+      <div class="content-section" id="sec-materials">
+        <div id="materialsList"></div>
+        <div class="empty-state" id="emptyMaterials" style="display:none;">
+          <i class="fas fa-book-open d-block"></i>
+          <p>No study materials available yet.</p>
+        </div>
+      </div>
+
+      <!-- VIDEOS -->
+      <div class="content-section" id="sec-videos">
+        <div class="row" id="videosList"></div>
+        <div class="empty-state" id="emptyVideos" style="display:none;">
+          <i class="fas fa-play-circle d-block"></i>
+          <p>No videos available yet.</p>
+        </div>
+      </div>
+
+      <!-- CLASS SCHEDULE -->
+      <div class="content-section" id="sec-schedule">
+        <div id="scheduleList"></div>
+        <div class="empty-state" id="emptySchedule" style="display:none;">
+          <i class="fas fa-calendar-alt d-block"></i>
+          <p>No upcoming classes scheduled.</p>
+        </div>
+      </div>
+
+      <!-- PAYMENT DETAILS -->
+      <div class="content-section" id="sec-payments">
+        <div class="portal-card mb-4" id="paymentSummary">
+          <div class="row text-center">
+            <div class="col-4">
+              <div style="font-size: 24px; font-weight: 700; color: var(--green);" id="totalPaid">&#8377;0</div>
+              <div style="font-size: 12px; color: var(--muted);">Total Paid</div>
+            </div>
+            <div class="col-4">
+              <div style="font-size: 24px; font-weight: 700; color: var(--gold);" id="totalPending">&#8377;0</div>
+              <div style="font-size: 12px; color: var(--muted);">Pending</div>
+            </div>
+            <div class="col-4">
+              <div style="font-size: 24px; font-weight: 700; color: var(--red);" id="totalOverdue">&#8377;0</div>
+              <div style="font-size: 12px; color: var(--muted);">Overdue</div>
+            </div>
+          </div>
+        </div>
+        <div id="paymentsList"></div>
+        <div class="empty-state" id="emptyPayments" style="display:none;">
+          <i class="fas fa-credit-card d-block"></i>
+          <p>No payment records found.</p>
+        </div>
+      </div>
+
+      <!-- MONTHLY MAGAZINES -->
+      <div class="content-section" id="sec-magazines">
+        <div class="row" id="magazinesList"></div>
+        <div class="empty-state" id="emptyMagazines" style="display:none;">
+          <i class="fas fa-newspaper d-block"></i>
+          <p>No magazines published yet.</p>
+        </div>
+      </div>
+
+      <!-- ADMIN: MANAGE CONTENT -->
+      <div class="content-section admin-only" id="sec-manage-content">
+        <div class="admin-form">
+          <h5><i class="fas fa-bullhorn mr-2"></i>Post Announcement</h5>
+          <div class="mb-3"><label class="form-label">Title</label><input type="text" class="form-dark" id="annTitle" placeholder="Announcement title"></div>
+          <div class="mb-3"><label class="form-label">Body</label><textarea class="form-dark" id="annBody" placeholder="Announcement details..."></textarea></div>
+          <div class="mb-3"><label class="form-label">Priority</label>
+            <select class="form-dark" id="annPriority"><option value="normal">Normal</option><option value="high">High / Urgent</option></select>
+          </div>
+          <button class="btn-gold" onclick="postAnnouncement()"><i class="fas fa-paper-plane mr-2"></i>Post</button>
+        </div>
+
+        <div class="admin-form">
+          <h5><i class="fas fa-book-open mr-2"></i>Add Study Material</h5>
+          <div class="mb-3"><label class="form-label">Title</label><input type="text" class="form-dark" id="matTitle" placeholder="Material title"></div>
+          <div class="mb-3"><label class="form-label">Description</label><input type="text" class="form-dark" id="matDesc" placeholder="Short description"></div>
+          <div class="mb-3"><label class="form-label">File URL (Google Drive, Dropbox, etc.)</label><input type="url" class="form-dark" id="matUrl" placeholder="https://..."></div>
+          <div class="mb-3"><label class="form-label">Category</label>
+            <select class="form-dark" id="matCategory"><option value="notes">Notes</option><option value="pdf">PDF</option><option value="cheatsheet">Cheatsheet</option><option value="template">Template</option><option value="other">Other</option></select>
+          </div>
+          <button class="btn-gold" onclick="addMaterial()"><i class="fas fa-plus mr-2"></i>Add Material</button>
+        </div>
+
+        <div class="admin-form">
+          <h5><i class="fas fa-play-circle mr-2"></i>Add Video</h5>
+          <div class="mb-3"><label class="form-label">Title</label><input type="text" class="form-dark" id="vidTitle" placeholder="Video title"></div>
+          <div class="mb-3"><label class="form-label">Description</label><input type="text" class="form-dark" id="vidDesc" placeholder="Short description"></div>
+          <div class="mb-3"><label class="form-label">YouTube URL</label><input type="url" class="form-dark" id="vidUrl" placeholder="https://youtube.com/watch?v=..."></div>
+          <div class="mb-3"><label class="form-label">Category</label>
+            <select class="form-dark" id="vidCategory"><option value="price-action">Price Action</option><option value="options">Options</option><option value="intraday">Intraday</option><option value="swing">Swing Trading</option><option value="risk">Risk Management</option><option value="mentorship">Mentorship</option><option value="other">Other</option></select>
+          </div>
+          <button class="btn-gold" onclick="addVideo()"><i class="fas fa-plus mr-2"></i>Add Video</button>
+        </div>
+
+        <div class="admin-form">
+          <h5><i class="fas fa-calendar-alt mr-2"></i>Add Class Schedule</h5>
+          <div class="mb-3"><label class="form-label">Title</label><input type="text" class="form-dark" id="schTitle" placeholder="Class title"></div>
+          <div class="mb-3"><label class="form-label">Date &amp; Time</label><input type="datetime-local" class="form-dark" id="schDateTime"></div>
+          <div class="mb-3"><label class="form-label">Instructor</label><input type="text" class="form-dark" id="schInstructor" placeholder="Instructor name"></div>
+          <div class="mb-3"><label class="form-label">Meeting Link (optional)</label><input type="url" class="form-dark" id="schMeetLink" placeholder="https://meet.google.com/..."></div>
+          <button class="btn-gold" onclick="addSchedule()"><i class="fas fa-plus mr-2"></i>Add Schedule</button>
+        </div>
+
+        <div class="admin-form">
+          <h5><i class="fas fa-newspaper mr-2"></i>Add Magazine</h5>
+          <div class="mb-3"><label class="form-label">Title</label><input type="text" class="form-dark" id="magTitle" placeholder="Magazine title"></div>
+          <div class="row">
+            <div class="col-6 mb-3"><label class="form-label">Month</label>
+              <select class="form-dark" id="magMonth"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+            </div>
+            <div class="col-6 mb-3"><label class="form-label">Year</label><input type="number" class="form-dark" id="magYear" value="2026"></div>
+          </div>
+          <div class="mb-3"><label class="form-label">PDF URL</label><input type="url" class="form-dark" id="magUrl" placeholder="https://..."></div>
+          <div class="mb-3"><label class="form-label">Cover Image URL (optional)</label><input type="url" class="form-dark" id="magCover" placeholder="https://..."></div>
+          <button class="btn-gold" onclick="addMagazine()"><i class="fas fa-plus mr-2"></i>Add Magazine</button>
+        </div>
+      </div>
+
+      <!-- ADMIN: SCHEDULE MEETING -->
+      <div class="content-section admin-only" id="sec-schedule-meeting">
+        <div class="admin-form">
+          <h5><i class="fas fa-video mr-2"></i>Schedule Meeting (Auto-Announces)</h5>
+          <p style="font-size: 13px; color: var(--muted); margin-bottom: 20px;">
+            <i class="fas fa-info-circle mr-1"></i> Scheduling a meeting will automatically create an announcement visible to all students.
+          </p>
+          <div class="mb-3"><label class="form-label">Meeting Title</label><input type="text" class="form-dark" id="meetTitle" placeholder="e.g., Options Strategy Review"></div>
+          <div class="mb-3"><label class="form-label">Meeting Link</label><input type="url" class="form-dark" id="meetLink" placeholder="https://meet.google.com/... or https://zoom.us/..."></div>
+          <div class="mb-3"><label class="form-label">Platform</label>
+            <select class="form-dark" id="meetPlatform"><option value="Google Meet">Google Meet</option><option value="Zoom">Zoom</option><option value="Microsoft Teams">Microsoft Teams</option><option value="Other">Other</option></select>
+          </div>
+          <div class="mb-3"><label class="form-label">Scheduled Date &amp; Time</label><input type="datetime-local" class="form-dark" id="meetDateTime"></div>
+          <button class="btn-gold" onclick="scheduleMeeting()"><i class="fas fa-calendar-check mr-2"></i>Schedule &amp; Announce</button>
+        </div>
+        <div class="admin-form">
+          <h5><i class="fas fa-list mr-2"></i>Active Meetings</h5>
+          <div id="activeMeetingsList"></div>
+        </div>
+      </div>
+
+      <!-- ADMIN: MANAGE PAYMENTS -->
+      <div class="content-section admin-only" id="sec-manage-payments">
+        <div class="admin-form">
+          <h5><i class="fas fa-wallet mr-2"></i>Record Payment</h5>
+          <div class="mb-3"><label class="form-label">Student Email</label><input type="email" class="form-dark" id="payEmail" placeholder="student@example.com"></div>
+          <div class="mb-3"><label class="form-label">Amount (&#8377;)</label><input type="number" class="form-dark" id="payAmount" placeholder="0"></div>
+          <div class="mb-3"><label class="form-label">Description</label><input type="text" class="form-dark" id="payDesc" placeholder="e.g., Foundation Course - Installment 1"></div>
+          <div class="mb-3"><label class="form-label">Status</label>
+            <select class="form-dark" id="payStatus"><option value="paid">Paid</option><option value="pending">Pending</option><option value="overdue">Overdue</option></select>
+          </div>
+          <div class="mb-3"><label class="form-label">Date</label><input type="date" class="form-dark" id="payDate"></div>
+          <button class="btn-gold" onclick="recordPayment()"><i class="fas fa-save mr-2"></i>Record Payment</button>
+        </div>
+        <div id="allPaymentsList"></div>
+      </div>
+
+      <!-- MASTER ADMIN: USER MANAGEMENT -->
+      <div class="content-section master-only" id="sec-user-management">
+        <div class="portal-card">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0"><i class="fas fa-users-cog mr-2" style="color: var(--gold);"></i>All Users</h5>
+            <span style="font-size: 13px; color: var(--muted);" id="userCount">0 users</span>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="user-table" id="userTable">
+              <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <!-- Firebase Module -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore, collection, doc, getDoc, setDoc, getDocs, addDoc, updateDoc, deleteDoc,
+      query, where, orderBy, limit, serverTimestamp, Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6rUPT3jiDGvhihHV7B1Zfn-cXpGnsDCk",
+      authDomain: "ciypvtltd-a7b93.firebaseapp.com",
+      projectId: "ciypvtltd-a7b93",
+      storageBucket: "ciypvtltd-a7b93.firebasestorage.app",
+      messagingSenderId: "298998467154",
+      appId: "1:298998467154:web:251622642f7749dcab6d8b",
+      measurementId: "G-5QW78G65XN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentUser = null;
+    let currentRole = 'student';
+
+    // ===== AUTH GUARD =====
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'login.html'; return; }
+      currentUser = user;
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        currentRole = userSnap.data().role || 'student';
+      } else {
+        await setDoc(userRef, {
+          uid: user.uid, email: user.email,
+          displayName: user.displayName || user.email.split('@')[0],
+          photoURL: user.photoURL || '', role: 'student', createdAt: serverTimestamp()
+        });
+        currentRole = 'student';
+      }
+      setupUI(user, currentRole);
+      document.getElementById('loadingScreen').style.display = 'none';
+      loadAllData();
+    });
+
+    // ===== UI SETUP =====
+    function setupUI(user, role) {
+      const displayName = user.displayName || user.email.split('@')[0];
+      const photo = user.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(displayName) + '&background=0A2E14&color=fff';
+      document.getElementById('userAvatar').src = photo;
+      document.getElementById('userName').textContent = displayName;
+      document.getElementById('userRoleLabel').textContent = role === 'masterAdmin' ? 'Master Admin' : role.charAt(0).toUpperCase() + role.slice(1);
+      if (role === 'admin' || role === 'masterAdmin') {
+        document.querySelectorAll('.admin-only').forEach(function(el) { el.style.display = ''; });
+      }
+      if (role === 'masterAdmin') {
+        document.querySelectorAll('.master-only').forEach(function(el) { el.style.display = ''; });
+      }
+    }
+
+    // ===== LOAD ALL DATA =====
+    async function loadAllData() {
+      await Promise.all([loadAnnouncements(), loadMaterials(), loadVideos(), loadSchedules(), loadPayments(), loadMagazines(), loadMeetings()]);
+      if (currentRole === 'masterAdmin') loadUsers();
+      if (currentRole === 'admin' || currentRole === 'masterAdmin') { loadAllPayments(); loadActiveMeetings(); }
+    }
+
+    // ===== HELPERS =====
+    function escapeHtml(text) { var d = document.createElement('div'); d.textContent = text || ''; return d.innerHTML; }
+    function getYouTubeEmbed(url) {
+      if (!url) return '';
+      var m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+      return m ? 'https://www.youtube.com/embed/' + m[1] : url;
+    }
+    function showToast(msg, isError) {
+      var t = document.getElementById('toast');
+      t.textContent = msg; t.className = isError ? 'error' : '';
+      t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 3000);
+    }
+    function formatDate(ts) {
+      if (!ts || !ts.seconds) return '';
+      return new Date(ts.seconds * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+    function formatDateShort(ts) {
+      if (!ts || !ts.seconds) return '';
+      return new Date(ts.seconds * 1000).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    // ===== ANNOUNCEMENTS =====
+    async function loadAnnouncements() {
+      try {
+        var q = query(collection(db, 'announcements'), orderBy('createdAt', 'desc'), limit(50));
+        var snap = await getDocs(q);
+        var c = document.getElementById('announcementsList'); c.innerHTML = '';
+        if (snap.empty) { document.getElementById('emptyAnnouncements').style.display = ''; return; }
+        document.getElementById('emptyAnnouncements').style.display = 'none';
+        var badge = document.getElementById('announceBadge'); badge.textContent = snap.size; badge.style.display = '';
+        snap.forEach(function(d) {
+          var data = d.data();
+          var pr = data.priority || 'normal';
+          var isMeet = data.type === 'meeting';
+          var css = isMeet ? 'priority-meeting' : (pr === 'high' ? 'priority-high' : '');
+          var bc = isMeet ? 'badge-meeting' : (pr === 'high' ? 'badge-high' : 'badge-normal');
+          var bt = isMeet ? '\uD83D\uDCC5 MEETING' : (pr === 'high' ? '\uD83D\uDD34 URGENT' : '\uD83D\uDCE2 UPDATE');
+          var del = (currentRole === 'admin' || currentRole === 'masterAdmin') ? '<button class="btn-danger ml-auto" onclick="deleteItem(\'announcements\',\'' + d.id + '\')"><i class="fas fa-trash"></i></button>' : '';
+          var ml = data.meetingLink ? '<a href="' + escapeHtml(data.meetingLink) + '" target="_blank" class="download-btn mt-2 d-inline-block" style="text-decoration:none;"><i class="fas fa-video mr-1"></i>Join Meeting</a>' : '';
+          c.innerHTML += '<div class="portal-card announce-card ' + css + '"><div class="d-flex align-items-start"><div class="flex-grow-1"><span class="announce-badge ' + bc + '">' + bt + '</span><h5>' + escapeHtml(data.title) + '</h5><div class="card-meta">' + formatDate(data.createdAt) + (data.createdByName ? ' \u2022 by ' + escapeHtml(data.createdByName) : '') + '</div><p>' + escapeHtml(data.body) + '</p>' + ml + '</div>' + del + '</div></div>';
+        });
+      } catch(e) { console.error('Announcements:', e); }
+    }
+
+    // ===== STUDY MATERIALS =====
+    async function loadMaterials() {
+      try {
+        var q = query(collection(db, 'study_materials'), orderBy('createdAt', 'desc'), limit(50));
+        var snap = await getDocs(q);
+        var c = document.getElementById('materialsList'); c.innerHTML = '';
+        if (snap.empty) { document.getElementById('emptyMaterials').style.display = ''; return; }
+        document.getElementById('emptyMaterials').style.display = 'none';
+        var icons = { notes: 'fa-sticky-note', pdf: 'fa-file-pdf', cheatsheet: 'fa-table', template: 'fa-file-alt', other: 'fa-file' };
+        snap.forEach(function(d) {
+          var data = d.data();
+          var ic = icons[data.category] || 'fa-file';
+          var del = (currentRole === 'admin' || currentRole === 'masterAdmin') ? '<button class="btn-danger" onclick="deleteItem(\'study_materials\',\'' + d.id + '\')"><i class="fas fa-trash"></i></button>' : '';
+          c.innerHTML += '<div class="portal-card material-card"><div class="material-icon"><i class="fas ' + ic + '"></i></div><div class="material-info"><h6>' + escapeHtml(data.title) + '</h6><div class="mat-desc">' + escapeHtml(data.description) + '</div></div><a href="' + escapeHtml(data.fileUrl) + '" target="_blank" class="download-btn"><i class="fas fa-download mr-1"></i>Download</a>' + del + '</div>';
+        });
+      } catch(e) { console.error('Materials:', e); }
+    }
+
+    // ===== VIDEOS =====
+    async function loadVideos() {
+      try {
+        var q = query(collection(db, 'videos'), orderBy('createdAt', 'desc'), limit(50));
+        var snap = await getDocs(q);
+        var c = document.getElementById('videosList'); c.innerHTML = '';
+        if (snap.empty) { document.getElementById('emptyVideos').style.display = ''; return; }
+        document.getElementById('emptyVideos').style.display = 'none';
+        snap.forEach(function(d) {
+          var data = d.data();
+          var embed = getYouTubeEmbed(data.youtubeUrl);
+          var del = (currentRole === 'admin' || currentRole === 'masterAdmin') ? '<button class="btn-danger mt-2" onclick="deleteItem(\'videos\',\'' + d.id + '\')"><i class="fas fa-trash mr-1"></i>Delete</button>' : '';
+          c.innerHTML += '<div class="col-md-6 col-lg-4 mb-4"><div class="portal-card video-card h-100"><div class="video-thumb"><iframe src="' + embed + '" allowfullscreen loading="lazy"></iframe></div><h6 style="font-weight:600;">' + escapeHtml(data.title) + '</h6><p style="font-size:13px;color:var(--muted);">' + escapeHtml(data.description) + '</p><span style="font-size:11px;color:var(--gold);font-weight:600;text-transform:uppercase;">' + escapeHtml(data.category) + '</span>' + del + '</div></div>';
+        });
+      } catch(e) { console.error('Videos:', e); }
+    }
+
+    // ===== CLASS SCHEDULE =====
+    async function loadSchedules() {
+      try {
+        var q = query(collection(db, 'schedules'), orderBy('dateTime', 'asc'), limit(30));
+        var snap = await getDocs(q);
+        var c = document.getElementById('scheduleList'); c.innerHTML = '';
+        if (snap.empty) { document.getElementById('emptySchedule').style.display = ''; return; }
+        document.getElementById('emptySchedule').style.display = 'none';
+        snap.forEach(function(d) {
+          var data = d.data();
+          var dt = data.dateTime ? new Date(data.dateTime.seconds * 1000) : new Date();
+          var day = dt.getDate();
+          var month = dt.toLocaleString('en-IN', { month: 'short' });
+          var time = dt.toLocaleString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+          var mb = data.meetingLink ? '<a href="' + escapeHtml(data.meetingLink) + '" target="_blank" class="btn-outline-gold ml-auto"><i class="fas fa-video mr-1"></i>Join</a>' : '';
+          var del = (currentRole === 'admin' || currentRole === 'masterAdmin') ? '<button class="btn-danger ml-2" onclick="deleteItem(\'schedules\',\'' + d.id + '\')"><i class="fas fa-trash"></i></button>' : '';
+          c.innerHTML += '<div class="portal-card schedule-item"><div class="schedule-date"><div class="s-day">' + day + '</div><div class="s-month">' + month + '</div></div><div class="flex-grow-1"><h6 style="font-weight:600;margin-bottom:2px;">' + escapeHtml(data.title) + '</h6><div style="font-size:13px;color:var(--muted);">' + time + (data.instructor ? ' \u2022 ' + escapeHtml(data.instructor) : '') + '</div></div>' + mb + del + '</div>';
+        });
+      } catch(e) { console.error('Schedules:', e); }
+    }
+
+    // ===== PAYMENTS (student own) =====
+    async function loadPayments() {
+      try {
+        var q = query(collection(db, 'payments'), where('studentUid', '==', currentUser.uid), orderBy('date', 'desc'));
+        var snap = await getDocs(q);
+        var c = document.getElementById('paymentsList'); c.innerHTML = '';
+        if (snap.empty) { document.getElementById('emptyPayments').style.display = ''; return; }
+        document.getElementById('emptyPayments').style.display = 'none';
+        var paid = 0, pending = 0, overdue = 0;
+        snap.forEach(function(d) {
+          var data = d.data(); var amt = Number(data.amount) || 0;
+          if (data.status === 'paid') paid += amt;
+          else if (data.status === 'pending') pending += amt;
+          else overdue += amt;
+          var sc = data.status === 'paid' ? 'status-paid' : data.status === 'pending' ? 'status-pending' : 'status-overdue';
+          c.innerHTML += '<div class="portal-card d-flex align-items-center"><div class="flex-grow-1"><h6 style="font-weight:600;margin-bottom:2px;">' + escapeHtml(data.description || 'Payment') + '</h6><div style="font-size:13px;color:var(--muted);">' + formatDateShort(data.date) + '</div></div><div class="text-right"><div style="font-weight:700;font-size:18px;">\u20B9' + amt.toLocaleString('en-IN') + '</div><span class="payment-status ' + sc + '">' + data.status + '</span></div></div>';
+        });
+        document.getElementById('totalPaid').textContent = '\u20B9' + paid.toLocaleString('en-IN');
+        document.getElementById('totalPending').textContent = '\u20B9' + pending.toLocaleString('en-IN');
+        document.getElementById('totalOverdue').textContent = '\u20B9' + overdue.toLocaleString('en-IN');
+      } catch(e) { console.error('Payments:', e); }
+    }
+
+    // ===== MAGAZINES =====
+    async function loadMagazines() {
+      try {
+        var q = query(collection(db, 'magazines'), orderBy('createdAt', 'desc'), limit(30));
+        var snap = await getDocs(q);
+        var c = document.getElementById('magazinesList'); c.innerHTML = '';
+        if (snap.empty) { document.getElementById('emptyMagazines').style.display = ''; return; }
+        document.getElementById('emptyMagazines').style.display = 'none';
+        snap.forEach(function(d) {
+          var data = d.data();
+          var cover = data.coverImageUrl ? '<img src="' + escapeHtml(data.coverImageUrl) + '" alt="' + escapeHtml(data.title) + '">' : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);"><i class="fas fa-newspaper" style="font-size:48px;opacity:0.2;"></i></div>';
+          var del = (currentRole === 'admin' || currentRole === 'masterAdmin') ? '<button class="btn-danger mt-2" onclick="deleteItem(\'magazines\',\'' + d.id + '\')"><i class="fas fa-trash mr-1"></i>Delete</button>' : '';
+          c.innerHTML += '<div class="col-md-4 col-lg-3 mb-4"><div class="portal-card magazine-card h-100"><div class="magazine-cover">' + cover + '</div><h6 style="font-weight:600;font-size:15px;">' + escapeHtml(data.title) + '</h6><div style="font-size:12px;color:var(--gold);font-weight:600;">' + escapeHtml(data.month) + ' ' + (data.year || '') + '</div><a href="' + escapeHtml(data.fileUrl || '#') + '" target="_blank" class="download-btn mt-3 d-inline-block" style="text-decoration:none;"><i class="fas fa-download mr-1"></i>Download PDF</a>' + del + '</div></div>';
+        });
+      } catch(e) { console.error('Magazines:', e); }
+    }
+
+    // ===== MEETINGS (top bar) =====
+    async function loadMeetings() {
+      try {
+        var q = query(collection(db, 'meetings'), where('isActive', '==', true), orderBy('scheduledAt', 'asc'));
+        var snap = await getDocs(q);
+        var bar = document.getElementById('meetingBar');
+        if (snap.empty) { bar.style.display = 'none'; return; }
+        bar.style.display = 'flex';
+        bar.innerHTML = '<i class="fas fa-video" style="font-size:16px;"></i>';
+        snap.forEach(function(d) {
+          var data = d.data();
+          var dt = data.scheduledAt ? new Date(data.scheduledAt.seconds * 1000).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }) : '';
+          bar.innerHTML += '<div class="meeting-item"><span>' + escapeHtml(data.title) + (dt ? ' \u2022 ' + dt : '') + '</span><a href="' + escapeHtml(data.link) + '" target="_blank"><button class="join-btn"><i class="fas fa-external-link-alt mr-1"></i>Join</button></a></div>';
+        });
+      } catch(e) { console.error('Meetings:', e); }
+    }
+
+    // ===== ACTIVE MEETINGS (admin) =====
+    async function loadActiveMeetings() {
+      try {
+        var q = query(collection(db, 'meetings'), orderBy('scheduledAt', 'desc'), limit(20));
+        var snap = await getDocs(q);
+        var c = document.getElementById('activeMeetingsList'); if (!c) return; c.innerHTML = '';
+        if (snap.empty) { c.innerHTML = '<p style="color:var(--muted);font-size:14px;">No meetings scheduled.</p>'; return; }
+        snap.forEach(function(d) {
+          var data = d.data();
+          var statusStyle = data.isActive ? 'background:rgba(0,200,83,0.15);color:var(--green);' : 'background:rgba(255,255,255,0.06);color:var(--muted);';
+          c.innerHTML += '<div class="d-flex align-items-center py-2 border-bottom" style="border-color:var(--border) !important;"><div class="flex-grow-1"><div style="font-weight:600;font-size:14px;">' + escapeHtml(data.title) + '</div><div style="font-size:12px;color:var(--muted);">' + escapeHtml(data.platform || '') + ' \u2022 ' + formatDate(data.scheduledAt) + '</div></div><span style="font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;' + statusStyle + '">' + (data.isActive ? 'Active' : 'Ended') + '</span><button class="btn-outline-gold ml-2" onclick="toggleMeeting(\'' + d.id + '\',' + !data.isActive + ')">' + (data.isActive ? 'End' : 'Activate') + '</button><button class="btn-danger ml-2" onclick="deleteItem(\'meetings\',\'' + d.id + '\')"><i class="fas fa-trash"></i></button></div>';
+        });
+      } catch(e) { console.error('Active meetings:', e); }
+    }
+
+    // ===== ALL PAYMENTS (admin) =====
+    async function loadAllPayments() {
+      try {
+        var q = query(collection(db, 'payments'), orderBy('date', 'desc'), limit(50));
+        var snap = await getDocs(q);
+        var c = document.getElementById('allPaymentsList'); if (!c) return; c.innerHTML = '';
+        if (snap.empty) { c.innerHTML = '<p style="color:var(--muted);font-size:14px;">No payment records.</p>'; return; }
+        snap.forEach(function(d) {
+          var data = d.data();
+          var sc = data.status === 'paid' ? 'status-paid' : data.status === 'pending' ? 'status-pending' : 'status-overdue';
+          c.innerHTML += '<div class="portal-card d-flex align-items-center"><div class="flex-grow-1"><h6 style="font-weight:600;margin-bottom:2px;">' + escapeHtml(data.description || 'Payment') + '</h6><div style="font-size:13px;color:var(--muted);">' + escapeHtml(data.studentEmail || '') + ' \u2022 ' + formatDateShort(data.date) + '</div></div><div class="text-right mr-3"><div style="font-weight:700;font-size:18px;">\u20B9' + (Number(data.amount) || 0).toLocaleString('en-IN') + '</div><span class="payment-status ' + sc + '">' + data.status + '</span></div><button class="btn-danger" onclick="deleteItem(\'payments\',\'' + d.id + '\')"><i class="fas fa-trash"></i></button></div>';
+        });
+      } catch(e) { console.error('All payments:', e); }
+    }
+
+    // ===== USERS (master admin) =====
+    async function loadUsers() {
+      try {
+        var q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+        var snap = await getDocs(q);
+        var tbody = document.getElementById('userTableBody'); if (!tbody) return; tbody.innerHTML = '';
+        document.getElementById('userCount').textContent = snap.size + ' users';
+        snap.forEach(function(d) {
+          var data = d.data();
+          var photo = data.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(data.displayName || 'U') + '&background=0A2E14&color=fff&size=32';
+          var joined = formatDateShort(data.createdAt) || 'N/A';
+          var rc = data.role === 'masterAdmin' ? 'role-masterAdmin' : data.role === 'admin' ? 'role-admin' : 'role-student';
+          var rl = data.role === 'masterAdmin' ? 'Master Admin' : data.role === 'admin' ? 'Admin' : 'Student';
+          var isSelf = d.id === currentUser.uid;
+          var actions = '';
+          if (!isSelf) {
+            if (data.role === 'student') actions = '<button class="btn-outline-gold" onclick="changeRole(\'' + d.id + '\',\'admin\')">Promote to Admin</button>';
+            else if (data.role === 'admin') actions = '<button class="btn-outline-gold mr-1" onclick="changeRole(\'' + d.id + '\',\'masterAdmin\')">\u2192 Master</button><button class="btn-danger" onclick="changeRole(\'' + d.id + '\',\'student\')">Demote</button>';
+          } else { actions = '<span style="font-size:12px;color:var(--muted);">You</span>'; }
+          tbody.innerHTML += '<tr><td><div class="d-flex align-items-center" style="gap:10px;"><img src="' + photo + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">' + escapeHtml(data.displayName || 'Unknown') + '</div></td><td style="color:var(--ink-dim);">' + escapeHtml(data.email || '') + '</td><td><span class="role-badge ' + rc + '">' + rl + '</span></td><td style="color:var(--muted);font-size:13px;">' + joined + '</td><td>' + actions + '</td></tr>';
+        });
+      } catch(e) { console.error('Users:', e); }
+    }
+
+    // ===== ADMIN WRITE ACTIONS =====
+    window.postAnnouncement = async function() {
+      var title = document.getElementById('annTitle').value.trim();
+      var body = document.getElementById('annBody').value.trim();
+      var priority = document.getElementById('annPriority').value;
+      if (!title) { showToast('Please enter a title.', true); return; }
+      try {
+        await addDoc(collection(db, 'announcements'), { title: title, body: body, priority: priority, type: 'manual', createdBy: currentUser.uid, createdByName: currentUser.displayName || currentUser.email, createdAt: serverTimestamp() });
+        document.getElementById('annTitle').value = ''; document.getElementById('annBody').value = '';
+        showToast('Announcement posted!'); loadAnnouncements();
+      } catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.addMaterial = async function() {
+      var title = document.getElementById('matTitle').value.trim();
+      var desc = document.getElementById('matDesc').value.trim();
+      var url = document.getElementById('matUrl').value.trim();
+      var cat = document.getElementById('matCategory').value;
+      if (!title || !url) { showToast('Title and URL required.', true); return; }
+      try {
+        await addDoc(collection(db, 'study_materials'), { title: title, description: desc, fileUrl: url, category: cat, createdBy: currentUser.uid, createdAt: serverTimestamp() });
+        document.getElementById('matTitle').value = ''; document.getElementById('matDesc').value = ''; document.getElementById('matUrl').value = '';
+        showToast('Study material added!'); loadMaterials();
+      } catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.addVideo = async function() {
+      var title = document.getElementById('vidTitle').value.trim();
+      var desc = document.getElementById('vidDesc').value.trim();
+      var url = document.getElementById('vidUrl').value.trim();
+      var cat = document.getElementById('vidCategory').value;
+      if (!title || !url) { showToast('Title and YouTube URL required.', true); return; }
+      try {
+        await addDoc(collection(db, 'videos'), { title: title, description: desc, youtubeUrl: url, category: cat, createdBy: currentUser.uid, createdAt: serverTimestamp() });
+        document.getElementById('vidTitle').value = ''; document.getElementById('vidDesc').value = ''; document.getElementById('vidUrl').value = '';
+        showToast('Video added!'); loadVideos();
+      } catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.addSchedule = async function() {
+      var title = document.getElementById('schTitle').value.trim();
+      var dtVal = document.getElementById('schDateTime').value;
+      var instructor = document.getElementById('schInstructor').value.trim();
+      var meetLink = document.getElementById('schMeetLink').value.trim();
+      if (!title || !dtVal) { showToast('Title and date required.', true); return; }
+      try {
+        await addDoc(collection(db, 'schedules'), { title: title, dateTime: Timestamp.fromDate(new Date(dtVal)), instructor: instructor, meetingLink: meetLink, createdBy: currentUser.uid, createdAt: serverTimestamp() });
+        document.getElementById('schTitle').value = ''; document.getElementById('schDateTime').value = ''; document.getElementById('schInstructor').value = ''; document.getElementById('schMeetLink').value = '';
+        showToast('Schedule added!'); loadSchedules();
+      } catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.addMagazine = async function() {
+      var title = document.getElementById('magTitle').value.trim();
+      var month = document.getElementById('magMonth').value;
+      var year = document.getElementById('magYear').value;
+      var url = document.getElementById('magUrl').value.trim();
+      var cover = document.getElementById('magCover').value.trim();
+      if (!title || !url) { showToast('Title and PDF URL required.', true); return; }
+      try {
+        await addDoc(collection(db, 'magazines'), { title: title, month: month, year: Number(year), fileUrl: url, coverImageUrl: cover, createdBy: currentUser.uid, createdAt: serverTimestamp() });
+        document.getElementById('magTitle').value = ''; document.getElementById('magUrl').value = ''; document.getElementById('magCover').value = '';
+        showToast('Magazine added!'); loadMagazines();
+      } catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    // Schedule Meeting (auto-announces)
+    window.scheduleMeeting = async function() {
+      var title = document.getElementById('meetTitle').value.trim();
+      var link = document.getElementById('meetLink').value.trim();
+      var platform = document.getElementById('meetPlatform').value;
+      var dtVal = document.getElementById('meetDateTime').value;
+      if (!title || !link || !dtVal) { showToast('Title, link, and date required.', true); return; }
+      var scheduledAt = Timestamp.fromDate(new Date(dtVal));
+      var dtFormatted = new Date(dtVal).toLocaleString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+      try {
+        // 1. Create announcement
+        var annRef = await addDoc(collection(db, 'announcements'), {
+          title: '\uD83D\uDCC5 New Meeting: ' + title,
+          body: 'A ' + platform + ' meeting has been scheduled for ' + dtFormatted + '. Click the join button below to attend.',
+          priority: 'normal', type: 'meeting', meetingLink: link,
+          createdBy: currentUser.uid, createdByName: currentUser.displayName || currentUser.email, createdAt: serverTimestamp()
+        });
+        // 2. Create meeting with linked announcement
+        await addDoc(collection(db, 'meetings'), {
+          title: title, link: link, platform: platform, isActive: true, scheduledAt: scheduledAt,
+          linkedAnnouncementId: annRef.id, createdBy: currentUser.uid, createdAt: serverTimestamp()
+        });
+        document.getElementById('meetTitle').value = ''; document.getElementById('meetLink').value = ''; document.getElementById('meetDateTime').value = '';
+        showToast('Meeting scheduled & announced!');
+        loadMeetings(); loadAnnouncements(); loadActiveMeetings();
+      } catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.recordPayment = async function() {
+      var email = document.getElementById('payEmail').value.trim();
+      var amount = document.getElementById('payAmount').value;
+      var desc = document.getElementById('payDesc').value.trim();
+      var status = document.getElementById('payStatus').value;
+      var dateVal = document.getElementById('payDate').value;
+      if (!email || !amount || !dateVal) { showToast('Email, amount, and date required.', true); return; }
+      try {
+        var userQ = query(collection(db, 'users'), where('email', '==', email), limit(1));
+        var userSnap = await getDocs(userQ);
+        var studentUid = userSnap.empty ? '' : userSnap.docs[0].id;
+        await addDoc(collection(db, 'payments'), { studentUid: studentUid, studentEmail: email, amount: Number(amount), description: desc, status: status, date: Timestamp.fromDate(new Date(dateVal)), recordedBy: currentUser.uid, createdAt: serverTimestamp() });
+        document.getElementById('payEmail').value = ''; document.getElementById('payAmount').value = ''; document.getElementById('payDesc').value = ''; document.getElementById('payDate').value = '';
+        showToast('Payment recorded!'); loadAllPayments();
+      } catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.toggleMeeting = async function(id, newState) {
+      try {
+        await updateDoc(doc(db, 'meetings', id), { isActive: newState });
+        showToast(newState ? 'Meeting activated!' : 'Meeting ended.');
+        loadMeetings(); loadActiveMeetings();
+      } catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.deleteItem = async function(coll, id) {
+      if (!confirm('Are you sure you want to delete this?')) return;
+      try { await deleteDoc(doc(db, coll, id)); showToast('Deleted.'); loadAllData(); }
+      catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.changeRole = async function(uid, newRole) {
+      var label = newRole === 'masterAdmin' ? 'Master Admin' : newRole === 'admin' ? 'Admin' : 'Student';
+      if (!confirm('Change role to ' + label + '?')) return;
+      try { await updateDoc(doc(db, 'users', uid), { role: newRole }); showToast('Role changed to ' + label + '!'); loadUsers(); }
+      catch(e) { showToast('Error: ' + e.message, true); }
+    };
+
+    window.handleLogout = async function() { await signOut(auth); window.location.href = 'login.html'; };
+
+    // ===== NAVIGATION =====
+    window.showSection = function(section) {
+      document.querySelectorAll('.content-section').forEach(function(el) { el.classList.remove('active'); });
+      document.querySelectorAll('.nav-item').forEach(function(el) { el.classList.remove('active'); });
+      var sec = document.getElementById('sec-' + section);
+      if (sec) sec.classList.add('active');
+      var nav = document.querySelector('.nav-item[data-section="' + section + '"]');
+      if (nav) nav.classList.add('active');
+      var titles = { 'announcements': 'Announcements', 'materials': 'Study Materials', 'videos': 'Videos', 'schedule': 'Class Schedule', 'payments': 'Payment Details', 'magazines': 'Monthly Magazines', 'manage-content': 'Manage Content', 'schedule-meeting': 'Schedule Meeting', 'manage-payments': 'Manage Payments', 'user-management': 'User Management' };
+      document.getElementById('sectionTitle').textContent = titles[section] || section;
+      if (window.innerWidth <= 768) toggleSidebar();
+    };
+
+    window.toggleSidebar = function() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('mobileOverlay').classList.toggle('show');
+    };
+  </script>
+</body>
+</html>
