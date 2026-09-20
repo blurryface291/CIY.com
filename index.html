@@ -1132,30 +1132,29 @@
     </div>
   </section>
 
-  <!-- 7b. Finance Consultant Section -->
+  <!-- 7b. CEO & Lead Financial Officer Section - Sanjeeb Dey -->
   <section class="section-padding bg-white">
     <div class="container reveal">
       <div class="row align-items-center">
         <!-- Left: Image -->
         <div class="col-lg-5 mb-5 mb-lg-0">
           <div class="text-center text-lg-left">
-            <img src="biswajit.jpg" alt="Mr. Biswajit Bharati - Finance Consultant" 
-                 onerror="this.onerror=null; this.src='biswajit.jpeg';" 
+            <img src="sanjeeb.jpg" alt="Mr. Sanjeeb Dey - CEO & Lead Financial Officer" 
                  style="width: 100%; max-width: 440px; aspect-ratio: 4/5; object-fit: cover; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1);">
           </div>
         </div>
         
         <!-- Right: Content -->
         <div class="col-lg-7 pl-lg-5">
-          <div style="display: inline-block; background: rgba(0, 200, 83, 0.1); color: var(--green-dark); padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px;">
-            FINANCE & STRATEGIC CONSULTANT
+          <div style="display: inline-block; background: rgba(212,175,55,0.12); color: #D4AF37; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; border: 1px solid rgba(212,175,55,0.25);">
+            FOUNDER
           </div>
           
-          <h3 class="poppins font-weight-bold mb-1" style="font-size: 30px; color: var(--ink);">Mr. Biswajit Bharati</h3>
-          <h2 class="poppins font-weight-bold mb-4" style="font-size: 20px; color: var(--green-dark);">Financial Planning & Capital Management</h2>
+          <h3 class="poppins font-weight-bold mb-1" style="font-size: 30px; color: var(--ink);">Mr. Sanjeeb Dey</h3>
+          <h2 class="poppins font-weight-bold mb-4" style="font-size: 20px; color: var(--green-dark);">CEO &amp; Lead Financial Officer — WeTraders</h2>
           
           <p style="color: var(--ink-dim); line-height: 1.8; font-size: 15px; margin-bottom: 16px;">
-            Mr. Biswajit Bharati serves as the Senior Finance & Strategic Consultant at WeTraders. With deep expertise in wealth management, capital allocation, and market risk advisory, he provides guidance to help traders structure their capital wisely.
+            Mr. Sanjeeb Dey serves as the CEO & Lead Financial Officer at WeTraders. With deep expertise in wealth management, capital allocation, and market risk advisory, he provides guidance to help traders structure their capital wisely.
           </p>
           <p style="color: var(--ink-dim); line-height: 1.8; font-size: 15px; margin-bottom: 24px;">
             His advisory framework emphasizes long-term wealth protection, portfolio diversification, and building sustainable financial habits alongside active market trading.
@@ -1512,38 +1511,32 @@
     }
   </script>
 
-  <!-- Firebase Authentication Module -->
+  <!-- Supabase Authentication Module -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { 
-      getAuth, 
-      signInWithPopup, 
-      GoogleAuthProvider, 
-      signOut, 
-      onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyD6rUPT3jiDGvhihHV7B1Zfn-cXpGnsDCk",
-      authDomain: "ciypvtltd-a7b93.firebaseapp.com",
-      projectId: "ciypvtltd-a7b93",
-      storageBucket: "ciypvtltd-a7b93.firebasestorage.app",
-      messagingSenderId: "298998467154",
-      appId: "1:298998467154:web:251622642f7749dcab6d8b",
-      measurementId: "G-5QW78G65XN"
-    };
+    const supabase = createClient(
+      'https://kvqvpxrvemxuzbnwxfmb.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt2cXZweHJ2ZW14dXpibnd4Zm1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MTg4ODcsImV4cCI6MjEwMzM5NDg4N30.PHEaBi_eWDvUWipdYnR_J3ihHUwmplye3Vr-5eM1C3M'
+    );
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
+    const HOME_FOR = { student: 'student.html', admin: 'admin.html', masterAdmin: 'master-admin.html' };
 
     const desktopAuth = document.getElementById('authDesktopContainer');
     const mobileAuth = document.getElementById('authMobileContainer');
 
-    function updateAuthUI(user) {
-      if (user) {
-        const displayName = user.displayName || user.email.split('@')[0];
-        const photo = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0A2E14&color=fff`;
+    async function getPortalUrl(userId) {
+      const { data: profile } = await supabase.from('users').select('role').eq('id', userId).single();
+      const role = profile?.role || 'student';
+      return HOME_FOR[role] || 'student.html';
+    }
+
+    async function updateAuthUI(session) {
+      if (session && session.user) {
+        const user = session.user;
+        const displayName = user.user_metadata?.full_name || user.email.split('@')[0];
+        const photo = user.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=0A2E14&color=fff`;
+        const portalUrl = await getPortalUrl(user.id);
 
         if (desktopAuth) {
           desktopAuth.innerHTML = `
@@ -1558,7 +1551,7 @@
                   <div class="font-weight-bold" style="font-size: 14px; color: var(--ink);">${displayName}</div>
                   <div style="font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis;">${user.email}</div>
                 </div>
-                <a href="dashboard.html" class="btn btn-sm btn-link text-dark w-100 text-left font-weight-bold p-2" style="font-size: 13px; text-decoration: none; border-radius: 6px;">
+                <a href="${portalUrl}" class="btn btn-sm btn-link text-dark w-100 text-left font-weight-bold p-2" style="font-size: 13px; text-decoration: none; border-radius: 6px;">
                   <i class="fas fa-th-large mr-2"></i> Student Portal
                 </a>
                 <button class="btn btn-sm btn-link text-danger w-100 text-left font-weight-bold p-2" onclick="logoutUser()" style="font-size: 13px; text-decoration: none; border-radius: 6px;">
@@ -1579,7 +1572,7 @@
                   <div style="font-size: 12px; color: #8E8EA0; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${user.email}</div>
                 </div>
               </div>
-              <a href="dashboard.html" class="btn btn-outline-light btn-sm w-100 mt-2 font-weight-bold" style="border-radius: 6px;">
+              <a href="${portalUrl}" class="btn btn-outline-light btn-sm w-100 mt-2 font-weight-bold" style="border-radius: 6px;">
                 <i class="fas fa-th-large mr-1"></i> Student Portal
               </a>
               <button class="btn btn-outline-danger btn-sm w-100 mt-3 font-weight-bold" onclick="logoutUser(); closeNav();" style="border-radius: 6px;">
@@ -1591,19 +1584,19 @@
       } else {
         if (desktopAuth) {
           desktopAuth.innerHTML = `
-            <button onclick="loginWithGoogle()" class="btn btn-dark font-weight-bold d-flex align-items-center" style="border-radius: 6px; padding: 8px 18px; gap: 8px; font-size: 14px;">
-              <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.2s.7 5.5 1.9 7.9l3.7-2.9z"/><path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"/></svg>
+            <a href="login.html" class="btn btn-dark font-weight-bold d-flex align-items-center" style="border-radius: 6px; padding: 8px 18px; gap: 8px; font-size: 14px;">
+              <i class="fas fa-user-circle"></i>
               Login / Signup
-            </button>
+            </a>
           `;
         }
 
         if (mobileAuth) {
           mobileAuth.innerHTML = `
-            <button onclick="loginWithGoogle(); closeNav();" class="btn btn-light text-dark font-weight-bold text-center w-100 d-flex align-items-center justify-content-center" style="border-radius: 6px; padding: 10px; gap: 8px; font-size: 14px;">
-              <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.2s.7 5.5 1.9 7.9l3.7-2.9z"/><path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"/></svg>
-              Sign in with Google
-            </button>
+            <a href="login.html" class="btn btn-light text-dark font-weight-bold text-center w-100 d-flex align-items-center justify-content-center" style="border-radius: 6px; padding: 10px; gap: 8px; font-size: 14px;">
+              <i class="fas fa-user-circle"></i>
+              Student Portal
+            </a>
           `;
         }
       }
@@ -1624,29 +1617,22 @@
       }
     });
 
-    window.loginWithGoogle = async function() {
-      try {
-        await signInWithPopup(auth, googleProvider);
-      } catch (error) {
-        console.error("Auth error:", error);
-        if (error.code === "auth/unauthorized-domain") {
-          alert("Domain Authorization Note: 'ciyindia.com' is not yet in the Firebase Authorized Domains list. Please add 'ciyindia.com' in Firebase Console > Authentication > Settings > Authorized Domains.");
-        } else if (error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request") {
-          alert("Login error: " + error.message);
-        }
-      }
-    };
-
     window.logoutUser = async function() {
       try {
-        await signOut(auth);
+        await supabase.auth.signOut();
+        updateAuthUI(null);
       } catch (error) {
         console.error("Sign-out error:", error);
       }
     };
 
-    onAuthStateChanged(auth, (user) => {
-      updateAuthUI(user);
+    // Check session on page load
+    const { data: { session } } = await supabase.auth.getSession();
+    updateAuthUI(session);
+
+    // Listen for auth state changes
+    supabase.auth.onAuthStateChange((_event, session) => {
+      updateAuthUI(session);
     });
   </script>
 </body>
