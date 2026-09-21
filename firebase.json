@@ -1,18 +1,4 @@
 {
-  "auth": {
-    "authorizedDomains": [
-      "localhost",
-      "ciyindia.com",
-      "ciypvtltd-a7b93.web.app",
-      "ciypvtltd-a7b93.firebaseapp.com"
-    ],
-    "providers": {
-      "googleSignIn": {
-        "oAuthBrandDisplayName": "WeTraders Institute",
-        "supportEmail": "support@ciyindia.com"
-      }
-    }
-  },
   "hosting": {
     "public": "public",
     "ignore": [
@@ -20,8 +6,5 @@
       "**/.*",
       "**/node_modules/**"
     ]
-  },
-  "firestore": {
-    "rules": "firestore.rules"
   }
 }
