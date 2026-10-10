@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Panel — WeTraders Institute</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="assets/panel.css">
+</head>
+<body>
+
+<div id="loadingScreen"><div class="loader"></div><p style="color:#A0A3BD">Loading your portal…</p></div>
+<div id="denyScreen">
+  <i class="fas fa-lock"></i><h3 class="poppins">Access denied</h3>
+  <p>You do not have permission to view this page.</p>
+  <a href="login.html" class="btn-outline-gold" style="padding:10px 22px">Back to login</a>
+</div>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="wetraders-logo-master.png" onerror="this.onerror=null;this.src='logo.png';" alt="WeTraders">
+    <div><div class="brand">WeTraders</div><div class="brand-sub">Student Panel</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Learning</div>
+    <div class="nav-item active" data-section="announcements" onclick="showSection('announcements')">
+      <i class="fas fa-bullhorn"></i> Announcements <span class="badge-count" id="announceBadge" style="display:none">0</span>
+    </div>
+    <div class="nav-item" data-section="materials" onclick="showSection('materials')"><i class="fas fa-folder-open"></i> Study Materials</div>
+    <div class="nav-item" data-section="videos" onclick="showSection('videos')"><i class="fas fa-play-circle"></i> Videos</div>
+    <div class="nav-item" data-section="schedule" onclick="showSection('schedule')"><i class="fas fa-calendar-days"></i> Class Schedule</div>
+    <div class="sidebar-section">Account</div>
+    <div class="nav-item" data-section="payments" onclick="showSection('payments')"><i class="fas fa-receipt"></i> My Payments</div>
+    <div class="nav-item" data-section="magazines" onclick="showSection('magazines')"><i class="fas fa-book-open"></i> Monthly Magazines</div>
+    <a href="admin.html" class="nav-switch" data-switch-role="admin" style="display:none">Go to Admin Panel →</a>
+  </nav>
+  <div class="sidebar-user">
+    <img id="userAvatar" src="logo.png" alt="">
+    <div class="user-info"><div class="user-name" id="userName">Loading…</div><div class="user-role" id="userRoleLabel">student</div></div>
+    <button class="logout-btn" title="Sign out" onclick="handleLogout()"><i class="fas fa-right-from-bracket"></i></button>
+  </div>
+</aside>
+
+<div class="main-wrapper">
+  <div id="meetingBar"></div>
+  <div class="top-header">
+    <div style="display:flex;align-items:center">
+      <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h4 id="sectionTitle" class="poppins">Announcements</h4>
+    </div>
+    <div class="header-right"><span id="todayLabel"></span></div>
+  </div>
+
+  <div class="main-content">
+    <div class="content-section active" id="sec-announcements">
+      <div id="announcementsList"></div>
+      <div class="empty-state" id="emptyAnnouncements" style="display:none">
+        <i class="fas fa-bullhorn"></i><p>No announcements yet.</p></div>
+    </div>
+
+    <div class="content-section" id="sec-materials">
+      <div id="materialsList"></div>
+      <div class="empty-state" id="emptyMaterials" style="display:none">
+        <i class="fas fa-folder-open"></i><p>No study materials have been shared yet.</p></div>
+    </div>
+
+    <div class="content-section" id="sec-videos">
+      <div class="row" id="videosList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px"></div>
+      <div class="empty-state" id="emptyVideos" style="display:none">
+        <i class="fas fa-play-circle"></i><p>No videos have been published yet.</p></div>
+    </div>
+
+    <div class="content-section" id="sec-schedule">
+      <div id="scheduleList"></div>
+      <div class="empty-state" id="emptySchedule" style="display:none">
+        <i class="fas fa-calendar-days"></i><p>No upcoming classes scheduled.</p></div>
+    </div>
+
+    <div class="content-section" id="sec-payments">
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="stat-icon ic-green"><i class="fas fa-circle-check"></i></div>
+          <div><div class="stat-val" id="totalPaid" style="color:var(--green)">₹0</div><div class="stat-lbl">Paid</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-gold"><i class="fas fa-hourglass-half"></i></div>
+          <div><div class="stat-val" id="totalPending" style="color:var(--gold)">₹0</div><div class="stat-lbl">Pending</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-red"><i class="fas fa-triangle-exclamation"></i></div>
+          <div><div class="stat-val" id="totalOverdue" style="color:var(--red)">₹0</div><div class="stat-lbl">Overdue</div></div></div>
+      </div>
+      <div id="paymentsList"></div>
+      <div class="empty-state" id="emptyPayments" style="display:none">
+        <i class="fas fa-receipt"></i><p>No payment records yet.</p></div>
+    </div>
+
+    <div class="content-section" id="sec-magazines">
+      <div class="row" id="magazinesList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px"></div>
+      <div class="empty-state" id="emptyMagazines" style="display:none">
+        <i class="fas fa-book-open"></i><p>No magazines published yet.</p></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import {
+  supabase, guard, initNav, toast, escapeHtml, inr, fmtDate, fmtDateTime, youTubeId
+} from './assets/supabase-core.js';
+
+const { user } = await guard('student');
+
+document.getElementById('todayLabel').textContent =
+  new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' });
+
+initNav({
+  announcements:'Announcements', materials:'Study Materials', videos:'Videos',
+  schedule:'Class Schedule', payments:'My Payments', magazines:'Monthly Magazines'
+});
+
+const $ = (id) => document.getElementById(id);
+const setEmpty = (id, on) => { $(id).style.display = on ? 'block' : 'none'; };
+
+async function loadAnnouncements() {
+  const { data: snap, error } = await supabase.from('announcements').select('*').order('created_at', {ascending: false}).limit(50);
+  if (error) throw error;
+  
+  const box = $('announcementsList'); box.innerHTML = '';
+  setEmpty('emptyAnnouncements', snap.length === 0);
+  const badge = $('announceBadge');
+  if (snap.length) { badge.textContent = snap.length; badge.style.display = 'inline-block'; }
+  snap.forEach((a) => {
+    const pri = a.priority === 'high' ? 'high' : (a.type === 'meeting' ? 'meeting' : 'normal');
+    const label = pri === 'high' ? 'Urgent' : pri === 'meeting' ? 'Live Meeting' : 'Notice';
+    box.insertAdjacentHTML('beforeend',
+      `<div class="portal-card announce-card priority-${pri}">
+         <span class="announce-badge badge-${pri}">${label}</span>
+         <h5>${escapeHtml(a.title)}</h5>
+         <div class="card-meta">${escapeHtml(a.created_by_name || 'WeTraders')} · ${fmtDateTime(a.created_at)}</div>
+         <p>${escapeHtml(a.body || '').replace(/\n/g,'<br>')}</p>
+       </div>`);
+  });
+}
+
+const MAT_ICON = { pdf:'fa-file-pdf', notes:'fa-file-lines', cheatsheet:'fa-table-list', template:'fa-file-excel', other:'fa-file' };
+async function loadMaterials() {
+  const { data: snap, error } = await supabase.from('study_materials').select('*').order('created_at', {ascending: false}).limit(50);
+  if (error) throw error;
+  const box = $('materialsList'); box.innerHTML = '';
+  setEmpty('emptyMaterials', snap.length === 0);
+  snap.forEach((m) => {
+    box.insertAdjacentHTML('beforeend',
+      `<div class="portal-card material-card">
+         <div class="material-icon"><i class="fas ${MAT_ICON[m.category] || 'fa-file'}"></i></div>
+         <div class="material-info">
+           <h6>${escapeHtml(m.title)}</h6>
+           <div class="mat-desc">${escapeHtml(m.description || '')}</div>
+         </div>
+         <a class="download-btn" href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener">Open</a>
+       </div>`);
+  });
+}
+
+async function loadVideos() {
+  const { data: snap, error } = await supabase.from('videos').select('*').order('created_at', {ascending: false}).limit(50);
+  if (error) throw error;
+  const box = $('videosList'); box.innerHTML = '';
+  setEmpty('emptyVideos', snap.length === 0);
+  snap.forEach((v) => {
+    const id = youTubeId(v.youtube_url);
+    const frame = id
+      ? `<iframe src="https://www.youtube.com/embed/${id}" allowfullscreen loading="lazy" title="${escapeHtml(v.title)}"></iframe>`
+      : `<div class="empty-state" style="padding:30px"><p>Video unavailable</p></div>`;
+    box.insertAdjacentHTML('beforeend',
+      `<div class="portal-card video-card">
+         <div class="video-thumb">${frame}</div>
+         <h5>${escapeHtml(v.title)}</h5>
+         <div class="card-meta">${escapeHtml(v.category || 'General')}</div>
+         <p>${escapeHtml(v.description || '')}</p>
+       </div>`);
+  });
+}
+
+async function loadSchedule() {
+  const { data: snap, error } = await supabase.from('schedules').select('*').order('date_time', {ascending: true}).limit(30);
+  if (error) throw error;
+  const box = $('scheduleList'); box.innerHTML = '';
+  setEmpty('emptySchedule', snap.length === 0);
+  snap.forEach((s) => {
+    const dt = new Date(s.date_time);
+    const join = s.meeting_link
+      ? `<a class="download-btn" href="${escapeHtml(s.meeting_link)}" target="_blank" rel="noopener">Join</a>` : '';
+    box.insertAdjacentHTML('beforeend',
+      `<div class="portal-card schedule-item">
+         <div class="schedule-date">
+           <div class="s-day">${dt.getDate()}</div>
+           <div class="s-month">${dt.toLocaleString('en-IN',{month:'short'})}</div>
+         </div>
+         <div class="material-info">
+           <h6>${escapeHtml(s.title)}</h6>
+           <div class="mat-desc">${fmtDateTime(s.date_time)} · ${escapeHtml(s.instructor || 'WeTraders')}</div>
+         </div>
+         ${join}
+       </div>`);
+  });
+}
+
+async function loadPayments() {
+  const { data: rows, error } = await supabase
+    .from('payments')
+    .select('*')
+    .eq('student_uid', user.id)
+    .order('date', {ascending: false});
+  if (error) throw error;
+  
+  const box = $('paymentsList'); box.innerHTML = '';
+  setEmpty('emptyPayments', rows.length === 0);
+  let paid = 0, pending = 0, overdue = 0;
+  
+  rows.forEach((p) => {
+    const amt = Number(p.amount || 0);
+    if (p.status === 'paid') paid += amt; else if (p.status === 'overdue') overdue += amt; else pending += amt;
+    box.insertAdjacentHTML('beforeend',
+      `<div class="portal-card material-card">
+         <div class="material-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+         <div class="material-info">
+           <h6>${inr(amt)}</h6>
+           <div class="mat-desc">${escapeHtml(p.description || 'Course fee')} · ${fmtDate(p.date)}</div>
+         </div>
+         <span class="payment-status status-${escapeHtml(p.status || 'pending')}">${escapeHtml((p.status||'pending').toUpperCase())}</span>
+       </div>`);
+  });
+  $('totalPaid').textContent = inr(paid);
+  $('totalPending').textContent = inr(pending);
+  $('totalOverdue').textContent = inr(overdue);
+}
+
+async function loadMagazines() {
+  const { data: snap, error } = await supabase.from('magazines').select('*').order('created_at', {ascending: false}).limit(30);
+  if (error) throw error;
+  const box = $('magazinesList'); box.innerHTML = '';
+  setEmpty('emptyMagazines', snap.length === 0);
+  snap.forEach((m) => {
+    const cover = m.cover_image_url
+      ? `<img src="${escapeHtml(m.cover_image_url)}" alt="${escapeHtml(m.title)}" loading="lazy">`
+      : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted)"><i class="fas fa-book-open" style="font-size:32px"></i></div>`;
+    box.insertAdjacentHTML('beforeend',
+      `<div class="portal-card magazine-card">
+         <div class="magazine-cover">${cover}</div>
+         <h5 style="font-size:15px">${escapeHtml(m.title)}</h5>
+         <div class="card-meta">${escapeHtml(m.month || '')} ${escapeHtml(String(m.year || ''))}</div>
+         <a class="download-btn" href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener">Read</a>
+       </div>`);
+  });
+}
+
+async function loadMeetingBar() {
+  const { data: snap, error } = await supabase
+    .from('meetings')
+    .select('*')
+    .eq('is_active', true)
+    .order('scheduled_at', {ascending: true});
+  if (error) throw error;
+
+  const bar = $('meetingBar');
+  if (snap.length === 0) { bar.style.display = 'none'; return; }
+  bar.innerHTML = '';
+  snap.forEach((m) => {
+    bar.insertAdjacentHTML('beforeend',
+      `<div class="meeting-item">
+         <i class="fas fa-video"></i>
+         <span>${escapeHtml(m.title)} · ${escapeHtml(m.platform || 'Live')} · ${fmtDateTime(m.scheduled_at)}</span>
+         <a class="join-btn" href="${escapeHtml(m.meeting_link)}" target="_blank" rel="noopener">Join now</a>
+       </div>`);
+  });
+  bar.style.display = 'flex';
+}
+
+try {
+  await Promise.all([
+    loadMeetingBar(), loadAnnouncements(), loadMaterials(),
+    loadVideos(), loadSchedule(), loadPayments(), loadMagazines()
+  ]);
+} catch (e) {
+  console.error(e);
+  toast('Some content could not load: ' + e.message, true);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — WeTraders Institute</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="assets/panel.css">
+</head>
+<body>
+
+<div id="loadingScreen"><div class="loader"></div><p style="color:#A0A3BD">Loading admin panel…</p></div>
+<div id="denyScreen">
+  <i class="fas fa-lock"></i><h3 class="poppins">Admin access only</h3>
+  <p>This panel is restricted to WeTraders staff.</p>
+  <a href="student.html" class="btn-outline-gold" style="padding:10px 22px">Go to student panel</a>
+</div>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="wetraders-logo-master.png" onerror="this.onerror=null;this.src='logo.png';" alt="WeTraders">
+    <div><div class="brand">WeTraders</div><div class="brand-sub">Admin Panel</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Overview</div>
+    <div class="nav-item active" data-section="overview" onclick="showSection('overview')"><i class="fas fa-gauge-high"></i> Dashboard</div>
+    <div class="sidebar-section">Content</div>
+    <div class="nav-item" data-section="announcements" onclick="showSection('announcements')"><i class="fas fa-bullhorn"></i> Announcements</div>
+    <div class="nav-item" data-section="materials" onclick="showSection('materials')"><i class="fas fa-folder-open"></i> Study Materials</div>
+    <div class="nav-item" data-section="videos" onclick="showSection('videos')"><i class="fas fa-play-circle"></i> Videos</div>
+    <div class="nav-item" data-section="schedule" onclick="showSection('schedule')"><i class="fas fa-calendar-days"></i> Class Schedule</div>
+    <div class="nav-item" data-section="magazines" onclick="showSection('magazines')"><i class="fas fa-book-open"></i> Magazines</div>
+    <div class="sidebar-section">Operations</div>
+    <div class="nav-item" data-section="meetings" onclick="showSection('meetings')"><i class="fas fa-video"></i> Live Meetings</div>
+    <div class="nav-item" data-section="payments" onclick="showSection('payments')"><i class="fas fa-indian-rupee-sign"></i> Payments</div>
+    <a href="master-admin.html" class="nav-switch" data-switch-role="masterAdmin" style="display:none">Go to Master Admin →</a>
+    <a href="student.html" class="nav-switch">View as Student →</a>
+  </nav>
+  <div class="sidebar-user">
+    <img id="userAvatar" src="logo.png" alt="">
+    <div class="user-info"><div class="user-name" id="userName">Loading…</div><div class="user-role" id="userRoleLabel">admin</div></div>
+    <button class="logout-btn" title="Sign out" onclick="handleLogout()"><i class="fas fa-right-from-bracket"></i></button>
+  </div>
+</aside>
+
+<div class="main-wrapper">
+  <div class="top-header">
+    <div style="display:flex;align-items:center">
+      <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h4 id="sectionTitle" class="poppins">Dashboard</h4>
+    </div>
+    <div class="header-right"><span id="todayLabel"></span></div>
+  </div>
+
+  <div class="main-content">
+    <!-- OVERVIEW -->
+    <div class="content-section active" id="sec-overview">
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="stat-icon ic-blue"><i class="fas fa-user-graduate"></i></div>
+          <div><div class="stat-val" id="kStudents">–</div><div class="stat-lbl">Students</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-gold"><i class="fas fa-bullhorn"></i></div>
+          <div><div class="stat-val" id="kAnnounce">–</div><div class="stat-lbl">Announcements</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-green"><i class="fas fa-play-circle"></i></div>
+          <div><div class="stat-val" id="kVideos">–</div><div class="stat-lbl">Videos</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-red"><i class="fas fa-calendar-days"></i></div>
+          <div><div class="stat-val" id="kClasses">–</div><div class="stat-lbl">Upcoming Classes</div></div></div>
+      </div>
+      <div class="portal-card">
+        <h5><i class="fas fa-clock-rotate-left mr-2" style="color:var(--gold)"></i> Latest announcements</h5>
+        <div class="card-meta">The five most recent notices students can see</div>
+        <div id="recentAnnounce" style="margin-top:14px"></div>
+      </div>
+      <div class="portal-card">
+        <h5><i class="fas fa-calendar-check mr-2" style="color:var(--gold)"></i> Next classes</h5>
+        <div id="recentClasses" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="content-section" id="sec-announcements">
+      <div class="admin-form">
+        <h5><i class="fas fa-plus mr-2"></i>Post an announcement</h5>
+        <div style="margin-bottom:14px"><label class="form-label">Title</label><input type="text" class="form-dark" id="annTitle" placeholder="Announcement title"></div>
+        <div style="margin-bottom:14px"><label class="form-label">Body</label><textarea class="form-dark" id="annBody" placeholder="Announcement details…"></textarea></div>
+        <div style="margin-bottom:18px"><label class="form-label">Priority</label>
+          <select class="form-dark" id="annPriority"><option value="normal">Normal</option><option value="high">High / Urgent</option></select></div>
+        <button class="btn-gold" data-post="announcements">Publish</button>
+      </div>
+      <div id="listAnnouncements"></div>
+    </div>
+
+    <!-- MATERIALS -->
+    <div class="content-section" id="sec-materials">
+      <div class="admin-form">
+        <h5><i class="fas fa-plus mr-2"></i>Add study material</h5>
+        <div style="margin-bottom:14px"><label class="form-label">Title</label><input type="text" class="form-dark" id="matTitle" placeholder="Material title"></div>
+        <div style="margin-bottom:14px"><label class="form-label">Description</label><input type="text" class="form-dark" id="matDesc" placeholder="Short description"></div>
+        <div style="margin-bottom:14px"><label class="form-label">File URL</label><input type="url" class="form-dark" id="matUrl" placeholder="https://…"></div>
+        <div style="margin-bottom:18px"><label class="form-label">Category</label>
+          <select class="form-dark" id="matCategory">
+            <option value="notes">Notes</option><option value="pdf">PDF</option>
+            <option value="cheatsheet">Cheatsheet</option><option value="template">Template</option>
+            <option value="other">Other</option></select></div>
+        <button class="btn-gold" data-post="study_materials">Add material</button>
+      </div>
+      <div id="listMaterials"></div>
+    </div>
+
+    <!-- VIDEOS -->
+    <div class="content-section" id="sec-videos">
+      <div class="admin-form">
+        <h5><i class="fas fa-plus mr-2"></i>Add a video</h5>
+        <div style="margin-bottom:14px"><label class="form-label">Title</label><input type="text" class="form-dark" id="vidTitle" placeholder="Video title"></div>
+        <div style="margin-bottom:14px"><label class="form-label">Description</label><input type="text" class="form-dark" id="vidDesc" placeholder="Short description"></div>
+        <div style="margin-bottom:14px"><label class="form-label">YouTube URL</label><input type="url" class="form-dark" id="vidUrl" placeholder="https://youtube.com/watch?v=…"></div>
+        <div style="margin-bottom:18px"><label class="form-label">Category</label>
+          <select class="form-dark" id="vidCategory">
+            <option value="price-action">Price Action</option><option value="options">Options</option>
+            <option value="intraday">Intraday</option><option value="swing">Swing Trading</option>
+            <option value="risk">Risk Management</option><option value="mentorship">Mentorship</option>
+            <option value="other">Other</option></select></div>
+        <button class="btn-gold" data-post="videos">Add video</button>
+      </div>
+      <div id="listVideos"></div>
+    </div>
+
+    <!-- SCHEDULE -->
+    <div class="content-section" id="sec-schedule">
+      <div class="admin-form">
+        <h5><i class="fas fa-plus mr-2"></i>Schedule a class</h5>
+        <div style="margin-bottom:14px"><label class="form-label">Title</label><input type="text" class="form-dark" id="schTitle" placeholder="Class title"></div>
+        <div style="margin-bottom:14px"><label class="form-label">Date &amp; time</label><input type="datetime-local" class="form-dark" id="schDateTime"></div>
+        <div style="margin-bottom:14px"><label class="form-label">Instructor</label><input type="text" class="form-dark" id="schInstructor" placeholder="Instructor name"></div>
+        <div style="margin-bottom:18px"><label class="form-label">Meeting link (optional)</label><input type="url" class="form-dark" id="schMeetLink" placeholder="https://meet.google.com/…"></div>
+        <button class="btn-gold" data-post="schedules">Add class</button>
+      </div>
+      <div id="listSchedules"></div>
+    </div>
+
+    <!-- MAGAZINES -->
+    <div class="content-section" id="sec-magazines">
+      <div class="admin-form">
+        <h5><i class="fas fa-plus mr-2"></i>Publish a magazine</h5>
+        <div style="margin-bottom:14px"><label class="form-label">Title</label><input type="text" class="form-dark" id="magTitle" placeholder="Magazine title"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div><label class="form-label">Month</label><select class="form-dark" id="magMonth">
+            <option>January</option><option>February</option><option>March</option><option>April</option>
+            <option>May</option><option>June</option><option>July</option><option>August</option>
+            <option>September</option><option>October</option><option>November</option><option>December</option></select></div>
+          <div><label class="form-label">Year</label><input type="number" class="form-dark" id="magYear" value="2026"></div>
+        </div>
+        <div style="margin-bottom:14px"><label class="form-label">PDF URL</label><input type="url" class="form-dark" id="magUrl" placeholder="https://…"></div>
+        <div style="margin-bottom:18px"><label class="form-label">Cover image URL (optional)</label><input type="url" class="form-dark" id="magCover" placeholder="https://…"></div>
+        <button class="btn-gold" data-post="magazines">Publish</button>
+      </div>
+      <div id="listMagazines"></div>
+    </div>
+
+    <!-- MEETINGS -->
+    <div class="content-section" id="sec-meetings">
+      <div class="admin-form">
+        <h5><i class="fas fa-video mr-2"></i>Start a live meeting</h5>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px">Publishing a meeting also posts an announcement and shows a join bar at the top of every student panel.</p>
+        <div style="margin-bottom:14px"><label class="form-label">Meeting title</label><input type="text" class="form-dark" id="meetTitle" placeholder="e.g. Options Strategy Review"></div>
+        <div style="margin-bottom:14px"><label class="form-label">Meeting link</label><input type="url" class="form-dark" id="meetLink" placeholder="https://meet.google.com/…"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+          <div><label class="form-label">Platform</label><select class="form-dark" id="meetPlatform">
+            <option>Google Meet</option><option>Zoom</option><option>Microsoft Teams</option><option>Other</option></select></div>
+          <div><label class="form-label">Scheduled for</label><input type="datetime-local" class="form-dark" id="meetDateTime"></div>
+        </div>
+        <button class="btn-gold" id="btnMeeting">Publish meeting</button>
+      </div>
+      <div class="portal-card"><h5>All meetings</h5><div id="listMeetings" style="margin-top:14px"></div></div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="content-section" id="sec-payments">
+      <div class="admin-form">
+        <h5><i class="fas fa-indian-rupee-sign mr-2"></i>Record a payment</h5>
+        <div style="margin-bottom:14px"><label class="form-label">Student email</label><input type="email" class="form-dark" id="payEmail" placeholder="student@example.com"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div><label class="form-label">Amount (₹)</label><input type="number" class="form-dark" id="payAmount" placeholder="0"></div>
+          <div><label class="form-label">Status</label><select class="form-dark" id="payStatus">
+            <option value="paid">Paid</option><option value="pending">Pending</option><option value="overdue">Overdue</option></select></div>
+        </div>
+        <div style="margin-bottom:14px"><label class="form-label">Description</label><input type="text" class="form-dark" id="payDesc" placeholder="e.g. AZP Strategy — instalment 1"></div>
+        <div style="margin-bottom:18px"><label class="form-label">Date</label><input type="date" class="form-dark" id="payDate"></div>
+        <button class="btn-gold" id="btnPayment">Save record</button>
+      </div>
+      <div class="portal-card"><h5>Recent payments</h5><div class="table-wrap" style="margin-top:14px">
+        <table class="user-table"><thead><tr><th>Student</th><th>Amount</th><th>Description</th><th>Date</th><th>Status</th><th></th></tr></thead>
+        <tbody id="paymentsBody"></tbody></table></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import {
+  supabase, guard, initNav, toast, escapeHtml, inr, fmtDate, fmtDateTime
+} from './assets/supabase-core.js';
+
+const { user } = await guard('admin');
+
+document.getElementById('todayLabel').textContent =
+  new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' });
+
+initNav({
+  overview:'Dashboard', announcements:'Announcements', materials:'Study Materials',
+  videos:'Videos', schedule:'Class Schedule', magazines:'Magazines',
+  meetings:'Live Meetings', payments:'Payments'
+});
+
+const $ = (id) => document.getElementById(id);
+const val = (id) => ($(id)?.value || '').trim();
+const clear = (...ids) => ids.forEach((i) => { if ($(i)) $(i).value = ''; });
+
+window.removeItem = async function (coll, id) {
+  if (!confirm('Delete this item? This cannot be undone.')) return;
+  try {
+    const { error } = await supabase.from(coll).delete().eq('id', id);
+    if (error) throw error;
+    toast('Deleted.');
+    refresh(coll);
+  } catch (e) { toast('Could not delete: ' + e.message, true); }
+};
+
+/* ---- one renderer per collection ------------------------------------- */
+const RENDER = {
+  announcements: (a) => `
+    <div class="portal-card announce-card ${a.priority === 'high' ? 'priority-high' : ''}">
+      <div style="display:flex;justify-content:space-between;gap:12px">
+        <div style="min-width:0">
+          <h5>${escapeHtml(a.title)}</h5>
+          <div class="card-meta">${escapeHtml(a.created_by_name || '')} · ${fmtDateTime(a.created_at)}</div>
+          <p>${escapeHtml(a.body || '').replace(/\n/g,'<br>')}</p>
+        </div>
+        <button class="btn-danger" style="align-self:flex-start" onclick="removeItem('announcements','${a.id}')"><i class="fas fa-trash"></i></button>
+      </div></div>`,
+  study_materials: (m) => `
+    <div class="portal-card material-card">
+      <div class="material-icon"><i class="fas fa-file"></i></div>
+      <div class="material-info"><h6>${escapeHtml(m.title)}</h6>
+        <div class="mat-desc">${escapeHtml(m.description || '')} · ${escapeHtml(m.category || '')}</div></div>
+      <a class="btn-outline-gold" href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener">Open</a>
+      <button class="btn-danger" onclick="removeItem('study_materials','${m.id}')"><i class="fas fa-trash"></i></button>
+    </div>`,
+  videos: (v) => `
+    <div class="portal-card material-card">
+      <div class="material-icon"><i class="fas fa-play"></i></div>
+      <div class="material-info"><h6>${escapeHtml(v.title)}</h6>
+        <div class="mat-desc">${escapeHtml(v.category || '')} · ${escapeHtml(v.youtube_url || '')}</div></div>
+      <button class="btn-danger" onclick="removeItem('videos','${v.id}')"><i class="fas fa-trash"></i></button>
+    </div>`,
+  schedules: (s) => `
+    <div class="portal-card material-card">
+      <div class="material-icon"><i class="fas fa-calendar"></i></div>
+      <div class="material-info"><h6>${escapeHtml(s.title)}</h6>
+        <div class="mat-desc">${fmtDateTime(s.date_time)} · ${escapeHtml(s.instructor || '')}</div></div>
+      <button class="btn-danger" onclick="removeItem('schedules','${s.id}')"><i class="fas fa-trash"></i></button>
+    </div>`,
+  magazines: (m) => `
+    <div class="portal-card material-card">
+      <div class="material-icon"><i class="fas fa-book"></i></div>
+      <div class="material-info"><h6>${escapeHtml(m.title)}</h6>
+        <div class="mat-desc">${escapeHtml(m.month || '')} ${escapeHtml(String(m.year || ''))}</div></div>
+      <a class="btn-outline-gold" href="${escapeHtml(m.file_url)}" target="_blank" rel="noopener">Open</a>
+      <button class="btn-danger" onclick="removeItem('magazines','${m.id}')"><i class="fas fa-trash"></i></button>
+    </div>`
+};
+const LIST_EL = {
+  announcements:'listAnnouncements', study_materials:'listMaterials', videos:'listVideos',
+  schedules:'listSchedules', magazines:'listMagazines'
+};
+const ORDER_BY = { schedules: ['date_time', true] }; // field, ascending
+
+async function renderList(coll) {
+  const box = $(LIST_EL[coll]); if (!box) return;
+  const [f, asc] = ORDER_BY[coll] || ['created_at', false];
+  const { data: snap, error } = await supabase.from(coll).select('*').order(f, {ascending: asc}).limit(60);
+  if (error) { console.error(error); return; }
+  
+  box.innerHTML = snap.length === 0
+    ? `<div class="empty-state"><i class="fas fa-inbox"></i><p>Nothing here yet.</p></div>` : '';
+  snap.forEach((d) => box.insertAdjacentHTML('beforeend', RENDER[coll](d)));
+}
+
+/* ---- creating ---------------------------------------------------------- */
+const BUILD = {
+  announcements: () => {
+    if (!val('annTitle') || !val('annBody')) return null;
+    return { title: val('annTitle'), body: val('annBody'), priority: val('annPriority'),
+             type:'manual', created_by: user.id, created_by_name: user.user_metadata?.full_name || user.email,
+             _clear:['annTitle','annBody'] };
+  },
+  study_materials: () => {
+    if (!val('matTitle') || !val('matUrl')) return null;
+    return { title: val('matTitle'), description: val('matDesc'), file_url: val('matUrl'),
+             category: val('matCategory'), created_by: user.id,
+             _clear:['matTitle','matDesc','matUrl'] };
+  },
+  videos: () => {
+    if (!val('vidTitle') || !val('vidUrl')) return null;
+    return { title: val('vidTitle'), description: val('vidDesc'), youtube_url: val('vidUrl'),
+             category: val('vidCategory'), created_by: user.id,
+             _clear:['vidTitle','vidDesc','vidUrl'] };
+  },
+  schedules: () => {
+    if (!val('schTitle') || !val('schDateTime')) return null;
+    return { title: val('schTitle'), date_time: new Date(val('schDateTime')).toISOString(),
+             instructor: val('schInstructor'), meeting_link: val('schMeetLink'),
+             created_by: user.id,
+             _clear:['schTitle','schDateTime','schInstructor','schMeetLink'] };
+  },
+  magazines: () => {
+    if (!val('magTitle') || !val('magUrl')) return null;
+    return { title: val('magTitle'), month: val('magMonth'), year: Number(val('magYear')),
+             file_url: val('magUrl'), cover_image_url: val('magCover'),
+             created_by: user.id,
+             _clear:['magTitle','magUrl','magCover'] };
+  }
+};
+
+document.querySelectorAll('[data-post]').forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    const coll = btn.dataset.post;
+    const payload = BUILD[coll]();
+    if (!payload) { toast('Please fill in the required fields.', true); return; }
+    const clearIds = payload._clear; delete payload._clear;
+    btn.disabled = true;
+    try {
+      const { error } = await supabase.from(coll).insert(payload);
+      if (error) throw error;
+      toast('Saved.'); clear(...clearIds); await renderList(coll); loadOverview();
+    } catch (e) { toast('Could not save: ' + e.message, true); }
+    finally { btn.disabled = false; }
+  });
+});
+
+/* ---- meetings ---------------------------------------------------------- */
+$('btnMeeting').addEventListener('click', async () => {
+  if (!val('meetTitle') || !val('meetLink') || !val('meetDateTime')) {
+    toast('Title, link and time are required.', true); return;
+  }
+  const btn = $('btnMeeting'); btn.disabled = true;
+  try {
+    const when = new Date(val('meetDateTime')).toISOString();
+    
+    // Create announcement first to get its ID, or create both.
+    // Supabase allows chaining if we need foreign keys.
+    const { data: annData, error: annError } = await supabase.from('announcements').insert({
+      title: 'Live session: ' + val('meetTitle'),
+      body: 'A live session is scheduled on ' + val('meetPlatform') + ' for ' +
+            new Date(val('meetDateTime')).toLocaleString('en-IN') + '. Join from the bar at the top of your panel.',
+      priority: 'normal', type: 'meeting', created_by: user.id,
+      created_by_name: user.user_metadata?.full_name || user.email
+    }).select('id').single();
+    
+    if (annError) throw annError;
+
+    const { error: meetError } = await supabase.from('meetings').insert({
+      title: val('meetTitle'), meeting_link: val('meetLink'), platform: val('meetPlatform'),
+      scheduled_at: when, is_active: true, created_by: user.id,
+      linked_announcement_id: annData.id
+    });
+    
+    if (meetError) throw meetError;
+
+    toast('Meeting published.');
+    clear('meetTitle','meetLink','meetDateTime');
+    loadMeetings(); renderList('announcements');
+  } catch (e) { toast('Could not publish: ' + e.message, true); }
+  finally { btn.disabled = false; }
+});
+
+window.toggleMeeting = async function (id, state) {
+  try {
+    const { error } = await supabase.from('meetings').update({ is_active: state }).eq('id', id);
+    if (error) throw error;
+    toast(state ? 'Meeting live.' : 'Meeting ended.');
+    loadMeetings();
+  } catch (e) { toast('Could not update: ' + e.message, true); }
+};
+
+async function loadMeetings() {
+  const { data: snap, error } = await supabase.from('meetings').select('*').order('scheduled_at', {ascending: false}).limit(30);
+  if (error) { console.error(error); return; }
+  
+  const box = $('listMeetings');
+  box.innerHTML = snap.length === 0 ? `<div class="empty-state"><i class="fas fa-video"></i><p>No meetings yet.</p></div>` : '';
+  snap.forEach((m) => {
+    const toggle = m.is_active
+      ? `<button class="btn-danger" onclick="toggleMeeting('${m.id}',false)">End</button>`
+      : `<button class="btn-outline-green" onclick="toggleMeeting('${m.id}',true)">Go live</button>`;
+    box.insertAdjacentHTML('beforeend',
+      `<div class="portal-card material-card">
+         <div class="material-icon" style="${m.is_active ? 'background:rgba(0,200,83,.12);color:var(--green)' : ''}"><i class="fas fa-video"></i></div>
+         <div class="material-info"><h6>${escapeHtml(m.title)}</h6>
+           <div class="mat-desc">${escapeHtml(m.platform || '')} · ${fmtDateTime(m.scheduled_at)}${m.is_active ? ' · <span style="color:var(--green);font-weight:700">LIVE</span>' : ''}</div></div>
+         ${toggle}
+         <button class="btn-danger" onclick="removeItem('meetings','${m.id}')"><i class="fas fa-trash"></i></button>
+       </div>`);
+  });
+}
+
+/* ---- payments ---------------------------------------------------------- */
+$('btnPayment').addEventListener('click', async () => {
+  const email = val('payEmail');
+  if (!email || !val('payAmount') || !val('payDate')) { toast('Email, amount and date are required.', true); return; }
+  const btn = $('btnPayment'); btn.disabled = true;
+  try {
+    const { data: found, error: findError } = await supabase.from('users').select('id').eq('email', email).limit(1);
+    if (findError) throw findError;
+    if (!found || found.length === 0) { toast('No student found with that email — they must sign in once first.', true); return; }
+    
+    const student_uid = found[0].id;
+    const { error: insertError } = await supabase.from('payments').insert({
+      student_uid, student_email: email, amount: Number(val('payAmount')),
+      description: val('payDesc'), status: val('payStatus'),
+      date: new Date(val('payDate')).toISOString(),
+      recorded_by: user.id
+    });
+    
+    if (insertError) throw insertError;
+    
+    toast('Payment recorded.');
+    clear('payEmail','payAmount','payDesc','payDate');
+    loadPayments();
+  } catch (e) { toast('Could not save: ' + e.message, true); }
+  finally { btn.disabled = false; }
+});
+
+async function loadPayments() {
+  const { data: snap, error } = await supabase.from('payments').select('*').order('date', {ascending: false}).limit(60);
+  if (error) { console.error(error); return; }
+  
+  const tb = $('paymentsBody');
+  tb.innerHTML = snap.length === 0 ? `<tr><td colspan="6" style="color:var(--muted)">No payments recorded yet.</td></tr>` : '';
+  snap.forEach((p) => {
+    tb.insertAdjacentHTML('beforeend',
+      `<tr><td>${escapeHtml(p.student_email || '')}</td>
+        <td style="font-weight:700">${inr(p.amount)}</td>
+        <td style="color:var(--ink-dim)">${escapeHtml(p.description || '')}</td>
+        <td style="color:var(--muted)">${fmtDate(p.date)}</td>
+        <td><span class="payment-status status-${escapeHtml(p.status || 'pending')}">${escapeHtml((p.status||'pending').toUpperCase())}</span></td>
+        <td><button class="btn-danger" onclick="removeItem('payments','${p.id}')"><i class="fas fa-trash"></i></button></td></tr>`);
+  });
+}
+
+/* ---- overview ---------------------------------------------------------- */
+async function loadOverview() {
+  try {
+    const { count: students } = await supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'student');
+    const { count: announcements } = await supabase.from('announcements').select('*', { count: 'exact', head: true });
+    const { count: videos } = await supabase.from('videos').select('*', { count: 'exact', head: true });
+    
+    const nowIso = new Date().toISOString();
+    const { data: upcoming } = await supabase.from('schedules').select('*').gte('date_time', nowIso).order('date_time', {ascending: true});
+    const { data: recentAnn } = await supabase.from('announcements').select('*').order('created_at', {ascending: false}).limit(5);
+
+    $('kStudents').textContent = students || 0;
+    $('kAnnounce').textContent = announcements || 0;
+    $('kVideos').textContent = videos || 0;
+    $('kClasses').textContent = upcoming ? upcoming.length : 0;
+
+    const ra = $('recentAnnounce'); ra.innerHTML = '';
+    if (recentAnn && recentAnn.length > 0) {
+      recentAnn.forEach((a) => {
+        ra.insertAdjacentHTML('beforeend',
+          `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+             <div style="font-weight:600;font-size:14px">${escapeHtml(a.title)}</div>
+             <div style="font-size:12px;color:var(--muted)">${fmtDateTime(a.created_at)}</div></div>`);
+      });
+    } else {
+      ra.innerHTML = '<p style="color:var(--muted);font-size:14px">Nothing posted yet.</p>';
+    }
+
+    const rc = $('recentClasses'); rc.innerHTML = '';
+    if (upcoming && upcoming.length > 0) {
+      upcoming.slice(0,5).forEach((s) => {
+        rc.insertAdjacentHTML('beforeend',
+          `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+             <div style="font-weight:600;font-size:14px">${escapeHtml(s.title)}</div>
+             <div style="font-size:12px;color:var(--muted)">${fmtDateTime(s.date_time)} · ${escapeHtml(s.instructor || '')}</div></div>`);
+      });
+    } else {
+      rc.innerHTML = '<p style="color:var(--muted);font-size:14px">No upcoming classes.</p>';
+    }
+  } catch (e) { console.error(e); }
+}
+
+function refresh(coll) {
+  if (LIST_EL[coll]) return renderList(coll);
+  if (coll === 'meetings') return loadMeetings();
+  if (coll === 'payments') return loadPayments();
+}
+
+try {
+  await Promise.all([
+    loadOverview(), loadMeetings(), loadPayments(),
+    ...Object.keys(LIST_EL).map(renderList)
+  ]);
+} catch (e) { console.error(e); toast('Some data could not load: ' + e.message, true); }
+</script>
+</body>
+</html>

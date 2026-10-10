@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Admin — WeTraders Institute</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="assets/panel.css">
+<style>
+  .bar-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .bar-row .bar-lbl { width:110px; font-size:13px; color:var(--ink-dim); flex-shrink:0; }
+  .bar-track { flex:1; height:10px; background:rgba(255,255,255,.06); border-radius:6px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:6px; }
+  .bar-row .bar-val { width:110px; text-align:right; font-weight:700; font-size:14px; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<div id="loadingScreen"><div class="loader"></div><p style="color:#A0A3BD">Loading master admin…</p></div>
+<div id="denyScreen">
+  <i class="fas fa-shield-halved"></i><h3 class="poppins">Master admin only</h3>
+  <p>This panel controls user roles and platform settings. Your account does not have access.</p>
+  <a href="student.html" class="btn-outline-gold" style="padding:10px 22px">Go to your panel</a>
+</div>
+
+<div class="mobile-overlay" id="mobileOverlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <img src="wetraders-logo-master.png" onerror="this.onerror=null;this.src='logo.png';" alt="WeTraders">
+    <div><div class="brand">WeTraders</div><div class="brand-sub" style="color:var(--red)">Master Admin</div></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Control</div>
+    <div class="nav-item active" data-section="overview" onclick="showSection('overview')"><i class="fas fa-chart-line"></i> Platform Overview</div>
+    <div class="nav-item" data-section="users" onclick="showSection('users')"><i class="fas fa-users-gear"></i> User Management <span class="badge-count" id="userBadge" style="display:none">0</span></div>
+    <div class="nav-item" data-section="staff" onclick="showSection('staff')"><i class="fas fa-user-shield"></i> Staff &amp; Roles</div>
+    <div class="nav-item" data-section="revenue" onclick="showSection('revenue')"><i class="fas fa-indian-rupee-sign"></i> Revenue</div>
+    <div class="nav-item" data-section="content" onclick="showSection('content')"><i class="fas fa-database"></i> Content Audit</div>
+    <a href="admin.html" class="nav-switch">Go to Admin Panel →</a>
+    <a href="student.html" class="nav-switch">View as Student →</a>
+  </nav>
+  <div class="sidebar-user">
+    <img id="userAvatar" src="logo.png" alt="">
+    <div class="user-info"><div class="user-name" id="userName">Loading…</div><div class="user-role" id="userRoleLabel">masterAdmin</div></div>
+    <button class="logout-btn" title="Sign out" onclick="handleLogout()"><i class="fas fa-right-from-bracket"></i></button>
+  </div>
+</aside>
+
+<div class="main-wrapper">
+  <div class="top-header">
+    <div style="display:flex;align-items:center">
+      <button class="mobile-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h4 id="sectionTitle" class="poppins">Platform Overview</h4>
+    </div>
+    <div class="header-right"><span id="todayLabel"></span></div>
+  </div>
+
+  <div class="main-content">
+    <!-- OVERVIEW -->
+    <div class="content-section active" id="sec-overview">
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="stat-icon ic-blue"><i class="fas fa-users"></i></div>
+          <div><div class="stat-val" id="kUsers">–</div><div class="stat-lbl">Total Users</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-green"><i class="fas fa-indian-rupee-sign"></i></div>
+          <div><div class="stat-val" id="kCollected" style="color:var(--green)">–</div><div class="stat-lbl">Collected</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-gold"><i class="fas fa-hourglass-half"></i></div>
+          <div><div class="stat-val" id="kOutstanding" style="color:var(--gold)">–</div><div class="stat-lbl">Outstanding</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-red"><i class="fas fa-user-shield"></i></div>
+          <div><div class="stat-val" id="kStaff" style="color:var(--red)">–</div><div class="stat-lbl">Staff Accounts</div></div></div>
+      </div>
+
+      <div class="portal-card">
+        <h5><i class="fas fa-chart-simple mr-2" style="color:var(--gold)"></i> Users by role</h5>
+        <div class="card-meta">Who can see and do what across the platform</div>
+        <div id="roleBars" style="margin-top:18px"></div>
+      </div>
+
+      <div class="portal-card">
+        <h5><i class="fas fa-user-plus mr-2" style="color:var(--gold)"></i> Recent sign-ups</h5>
+        <div class="table-wrap" style="margin-top:14px">
+          <table class="user-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr></thead>
+          <tbody id="recentSignups"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="content-section" id="sec-users">
+      <div class="portal-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+          <div><h5 style="margin-bottom:2px">All users</h5>
+            <div class="card-meta" style="margin:0" id="userCount">0 users</div></div>
+          <input type="search" class="form-dark" id="userSearch" placeholder="Search name or email…" style="max-width:280px">
+        </div>
+        <div class="table-wrap" style="margin-top:18px">
+          <table class="user-table">
+            <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Joined</th><th style="text-align:right">Actions</th></tr></thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="portal-card" style="border-left:4px solid var(--gold)">
+        <h5 style="font-size:15px"><i class="fas fa-circle-info mr-2" style="color:var(--gold)"></i>How roles work</h5>
+        <p style="margin-top:8px"><strong style="color:var(--blue)">Student</strong> — reads announcements, materials, videos, schedule, magazines and their own payments.<br>
+        <strong style="color:var(--gold)">Admin</strong> — everything a student sees, plus publishing content, scheduling meetings and recording payments.<br>
+        <strong style="color:var(--red)">Master Admin</strong> — everything an admin can do, plus changing anyone's role.</p>
+      </div>
+    </div>
+
+    <!-- STAFF -->
+    <div class="content-section" id="sec-staff">
+      <div class="portal-card">
+        <h5>Staff accounts</h5>
+        <div class="card-meta">Everyone who can publish content or change data</div>
+        <div class="table-wrap" style="margin-top:18px">
+          <table class="user-table">
+            <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Joined</th><th style="text-align:right">Actions</th></tr></thead>
+            <tbody id="staffTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div class="content-section" id="sec-revenue">
+      <div class="stat-grid">
+        <div class="stat-tile"><div class="stat-icon ic-green"><i class="fas fa-circle-check"></i></div>
+          <div><div class="stat-val" id="rPaid" style="color:var(--green)">₹0</div><div class="stat-lbl">Paid</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-gold"><i class="fas fa-hourglass-half"></i></div>
+          <div><div class="stat-val" id="rPending" style="color:var(--gold)">₹0</div><div class="stat-lbl">Pending</div></div></div>
+        <div class="stat-tile"><div class="stat-icon ic-red"><i class="fas fa-triangle-exclamation"></i></div>
+          <div><div class="stat-val" id="rOverdue" style="color:var(--red)">₹0</div><div class="stat-lbl">Overdue</div></div></div>
+      </div>
+      <div class="portal-card">
+        <h5>Collections by month</h5>
+        <div class="card-meta">Paid records only, most recent first</div>
+        <div id="monthBars" style="margin-top:18px"></div>
+      </div>
+      <div class="portal-card">
+        <h5>All payment records</h5>
+        <div class="table-wrap" style="margin-top:14px">
+          <table class="user-table"><thead><tr><th>Student</th><th>Amount</th><th>Description</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="revenueBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT AUDIT -->
+    <div class="content-section" id="sec-content">
+      <div class="stat-grid" id="contentTiles"></div>
+      <div class="portal-card">
+        <h5>Where to manage this</h5>
+        <p style="margin-top:8px">Content is created and deleted from the <a href="admin.html">Admin Panel</a>. This page is a read-only count so you can see at a glance what students have access to.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import {
+  supabase, guard, initNav, toast, escapeHtml, inr, fmtDate, fmtDateTime, ROLE_LABEL
+} from './assets/supabase-core.js';
+
+const { user } = await guard('masterAdmin');
+
+document.getElementById('todayLabel').textContent =
+  new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long' });
+
+initNav({
+  overview:'Platform Overview', users:'User Management', staff:'Staff & Roles',
+  revenue:'Revenue', content:'Content Audit'
+});
+
+const $ = (id) => document.getElementById(id);
+let allUsers = [];
+
+const roleClass = (r) => r === 'masterAdmin' ? 'role-masterAdmin' : r === 'admin' ? 'role-admin' : 'role-student';
+
+function actionsFor(u) {
+  if (u.id === user.id) return '<span style="color:var(--muted);font-size:12px">You</span>';
+  const r = u.role;
+  if (r === 'student')
+    return `<button class="btn-outline-gold" onclick="setRole('${u.id}','admin')">Make Admin</button>`;
+  if (r === 'admin')
+    return `<button class="btn-outline-gold" style="margin-right:6px" onclick="setRole('${u.id}','masterAdmin')">→ Master</button>
+            <button class="btn-danger" onclick="setRole('${u.id}','student')">Demote</button>`;
+  return `<button class="btn-danger" onclick="setRole('${u.id}','admin')">↓ Admin</button>`;
+}
+
+function rowFor(u) {
+  const photo = u.photo_url || 'logo.png';
+  return `<tr>
+    <td><div style="display:flex;align-items:center;gap:10px">
+      <img src="${escapeHtml(photo)}" onerror="this.onerror=null;this.src='logo.png';" style="width:32px;height:32px;border-radius:50%;object-fit:cover">
+      ${escapeHtml(u.display_name || 'Unknown')}</div></td>
+    <td style="color:var(--ink-dim)">${escapeHtml(u.email || '')}</td>
+    <td><span class="role-badge ${roleClass(u.role)}">${ROLE_LABEL[u.role] || u.role}</span></td>
+    <td style="color:var(--muted);font-size:13px">${fmtDate(u.created_at)}</td>
+    <td style="text-align:right">${actionsFor(u)}</td></tr>`;
+}
+
+function paintUsers() {
+  const term = ($('userSearch').value || '').toLowerCase();
+  const rows = allUsers.filter((u) =>
+    !term || (u.display_name || '').toLowerCase().includes(term) || (u.email || '').toLowerCase().includes(term));
+  $('userTableBody').innerHTML = rows.length
+    ? rows.map(rowFor).join('')
+    : `<tr><td colspan="5" style="color:var(--muted)">No users match “${escapeHtml(term)}”.</td></tr>`;
+  $('userCount').textContent = allUsers.length + (allUsers.length === 1 ? ' user' : ' users');
+  const badge = $('userBadge');
+  badge.textContent = allUsers.length; badge.style.display = allUsers.length ? 'inline-block' : 'none';
+
+  const staff = allUsers.filter((u) => u.role === 'admin' || u.role === 'masterAdmin');
+  $('staffTableBody').innerHTML = staff.length
+    ? staff.map(rowFor).join('')
+    : `<tr><td colspan="5" style="color:var(--muted)">No staff accounts yet.</td></tr>`;
+}
+$('userSearch').addEventListener('input', paintUsers);
+
+window.setRole = async function (uid, newRole) {
+  const target = allUsers.find((u) => u.id === uid);
+  if (!target) return;
+  if (uid === user.id) { toast('You cannot change your own role.', true); return; }
+  // Never leave the platform without a master admin.
+  const masters = allUsers.filter((u) => u.role === 'masterAdmin');
+  if (target.role === 'masterAdmin' && newRole !== 'masterAdmin' && masters.length <= 1) {
+    toast('This is the only master admin — promote someone else first.', true); return;
+  }
+  if (!confirm(`Change ${target.display_name || target.email} to ${ROLE_LABEL[newRole]}?`)) return;
+  try {
+    const { error } = await supabase.from('users').update({ role: newRole }).eq('id', uid);
+    if (error) throw error;
+    target.role = newRole;
+    toast('Role updated to ' + ROLE_LABEL[newRole] + '.');
+    paintUsers(); paintOverview();
+  } catch (e) { toast('Could not change role: ' + e.message, true); }
+};
+
+async function loadUsers() {
+  const { data: snap, error } = await supabase.from('users').select('*').order('created_at', {ascending: false});
+  if (error) { console.error(error); return; }
+  
+  allUsers = snap || [];
+  allUsers.forEach((u) => { if (!['student','admin','masterAdmin'].includes(u.role)) u.role = 'student'; });
+  paintUsers();
+}
+
+function paintOverview() {
+  const counts = { student:0, admin:0, masterAdmin:0 };
+  allUsers.forEach((u) => counts[u.role]++);
+  $('kUsers').textContent = allUsers.length;
+  $('kStaff').textContent = counts.admin + counts.masterAdmin;
+
+  const total = allUsers.length || 1;
+  const spec = [
+    ['Students', counts.student, 'var(--blue)'],
+    ['Admins', counts.admin, 'var(--gold)'],
+    ['Master Admins', counts.masterAdmin, 'var(--red)']
+  ];
+  $('roleBars').innerHTML = spec.map(([lbl, n, col]) =>
+    `<div class="bar-row"><div class="bar-lbl">${lbl}</div>
+       <div class="bar-track"><div class="bar-fill" style="width:${(n/total*100).toFixed(1)}%;background:${col}"></div></div>
+       <div class="bar-val" style="color:${col}">${n}</div></div>`).join('');
+
+  $('recentSignups').innerHTML = allUsers.slice(0,6).map((u) =>
+    `<tr><td>${escapeHtml(u.display_name || 'Unknown')}</td>
+      <td style="color:var(--ink-dim)">${escapeHtml(u.email || '')}</td>
+      <td><span class="role-badge ${roleClass(u.role)}">${ROLE_LABEL[u.role]}</span></td>
+      <td style="color:var(--muted);font-size:13px">${fmtDate(u.created_at)}</td></tr>`).join('')
+    || `<tr><td colspan="4" style="color:var(--muted)">No users yet.</td></tr>`;
+}
+
+async function loadRevenue() {
+  const { data: rows, error } = await supabase.from('payments').select('*').order('date', {ascending: false}).limit(200);
+  if (error) { console.error(error); return; }
+  
+  let paid = 0, pending = 0, overdue = 0;
+  const byMonth = new Map();
+  (rows || []).forEach((p) => {
+    const amt = Number(p.amount || 0);
+    if (p.status === 'paid') {
+      paid += amt;
+      const d = new Date(p.date);
+      if (d && !isNaN(d)) {
+        const key = d.toLocaleString('en-IN', { month:'short', year:'numeric' });
+        byMonth.set(key, (byMonth.get(key) || 0) + amt);
+      }
+    } else if (p.status === 'overdue') overdue += amt;
+    else pending += amt;
+  });
+  
+  $('rPaid').textContent = inr(paid);
+  $('rPending').textContent = inr(pending);
+  $('rOverdue').textContent = inr(overdue);
+  $('kCollected').textContent = inr(paid);
+  $('kOutstanding').textContent = inr(pending + overdue);
+
+  const months = [...byMonth.entries()].slice(0, 8);
+  const peak = Math.max(1, ...months.map(([, v]) => v));
+  $('monthBars').innerHTML = months.length
+    ? months.map(([k, v]) =>
+        `<div class="bar-row"><div class="bar-lbl">${escapeHtml(k)}</div>
+           <div class="bar-track"><div class="bar-fill" style="width:${(v/peak*100).toFixed(1)}%;background:var(--green)"></div></div>
+           <div class="bar-val" style="color:var(--green)">${inr(v)}</div></div>`).join('')
+    : '<p style="color:var(--muted);font-size:14px">No paid records yet.</p>';
+
+  $('revenueBody').innerHTML = (rows && rows.length)
+    ? rows.map((p) =>
+        `<tr><td>${escapeHtml(p.student_email || '')}</td>
+          <td style="font-weight:700">${inr(p.amount)}</td>
+          <td style="color:var(--ink-dim)">${escapeHtml(p.description || '')}</td>
+          <td style="color:var(--muted)">${fmtDate(p.date)}</td>
+          <td><span class="payment-status status-${escapeHtml(p.status || 'pending')}">${escapeHtml((p.status||'pending').toUpperCase())}</span></td></tr>`).join('')
+    : `<tr><td colspan="5" style="color:var(--muted)">No payments recorded yet.</td></tr>`;
+}
+
+async function loadContentAudit() {
+  const defs = [
+    ['announcements','Announcements','fa-bullhorn','ic-gold'],
+    ['study_materials','Study Materials','fa-folder-open','ic-blue'],
+    ['videos','Videos','fa-play-circle','ic-green'],
+    ['schedules','Classes','fa-calendar-days','ic-red'],
+    ['magazines','Magazines','fa-book-open','ic-gold'],
+    ['meetings','Meetings','fa-video','ic-green']
+  ];
+  
+  const results = await Promise.all(defs.map(async ([c]) => {
+    try {
+      const { count } = await supabase.from(c).select('*', { count: 'exact', head: true });
+      return count !== null ? count : '–';
+    } catch (e) { return '–'; }
+  }));
+  
+  $('contentTiles').innerHTML = defs.map(([, label, icon, cls], i) =>
+    `<div class="stat-tile"><div class="stat-icon ${cls}"><i class="fas ${icon}"></i></div>
+       <div><div class="stat-val">${results[i]}</div><div class="stat-lbl">${label}</div></div></div>`).join('');
+}
+
+try {
+  await loadUsers();
+  paintOverview();
+  await Promise.all([loadRevenue(), loadContentAudit()]);
+} catch (e) { console.error(e); toast('Some data could not load: ' + e.message, true); }
+</script>
+</body>
+</html>
